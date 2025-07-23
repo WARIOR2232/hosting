@@ -14,21 +14,31 @@ export default function TenantTable() {
       });
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className="text-center mt-4">Loading...</p>;
 
   return (
-    <table>
-      <thead>
-        <tr><th>Name</th><th>Email</th></tr>
-      </thead>
-      <tbody>
-        {tenants.map((tenant, i) => (
-          <tr key={i}>
-            <td>{tenant.nama}</td>
-            <td>{tenant.email}</td>
+    <div className="overflow-x-auto mt-6">
+      <table className="min-w-full border border-gray-300 rounded-lg shadow-md">
+        <thead className="bg-green-600 text-white">
+          <tr>
+            <th className="px-4 py-2 border">ID</th>
+            <th className="px-4 py-2 border">Nama</th>
+            <th className="px-4 py-2 border">Email</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {tenants.map((tenant, i) => (
+            <tr
+              key={i}
+              className={i % 2 === 0 ? "bg-white" : "bg-gray-100"}
+            >
+              <td className="px-4 py-2 border text-center">{tenant.id}</td>
+              <td className="px-4 py-2 border">{tenant.nama}</td>
+              <td className="px-4 py-2 border">{tenant.email}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
