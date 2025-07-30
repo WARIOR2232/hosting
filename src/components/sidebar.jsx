@@ -15,6 +15,7 @@ export default function Sidebar({ isOpen, onClose }) {
     { to: '/tenants',    label: 'Tenants',     icon: Users },
     { to: '/investments',label: 'Investments', icon: BarChart3 },
     { to: '/settings',   label: 'Settings',    icon: Settings },
+    { to: '/settings',   label: 'Tambah data',    icon: Settings },
   ];
 
   return (
