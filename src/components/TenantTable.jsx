@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 export default function CertificateTable() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
 
   useEffect(() => {
     fetch("https://script.google.com/macros/s/AKfycbxN992z4Uy9eoPrCAl9wPQ0aDGIs2A50adQD2FDyA3ElCzM344kuACGGm2Za3V9NT23Qg/exec")
@@ -12,6 +14,10 @@ export default function CertificateTable() {
         setLoading(false);
       });
   }, []);
+
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = data.slice(startIndex, startIndex + itemsPerPage);
 
   const getStatusStyle = (status) => {
     switch (status?.toLowerCase()) {
@@ -55,9 +61,9 @@ export default function CertificateTable() {
           </tr>
         </thead>
         <tbody>
-          {data.map((row, index) => (
+          {paginatedData.map((row, index) => (
             <tr key={index} className="border-t border-gray-200 hover:bg-gray-50">
-              <td className="px-4 py-2 text-center">{row.id}</td>
+              <td className="px-4 py-2 text-center">{startIndex + index + 1}</td>
               <td className="px-4 py-2">{row.NamaPemilik}</td>
               <td className="px-4 py-2">{row.NamaPT}</td>
               <td className="px-4 py-2">{row.Brand}</td>
@@ -74,6 +80,45 @@ export default function CertificateTable() {
           ))}
         </tbody>
       </table>
+
+      {/* Pagination */}
+      <div className="mt-4 flex justify-center gap-2">
+  {/* Tombol Previous */}
+  <button
+    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+    disabled={currentPage === 1}
+    className={`px-3 py-1 border rounded ${
+      currentPage === 1 ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-white hover:bg-blue-100"
+    }`}
+  >
+    ← Prev
+  </button>
+
+  {/* Nomor Halaman */}
+  {Array.from({ length: totalPages }, (_, i) => (
+    <button
+      key={i}
+      onClick={() => setCurrentPage(i + 1)}
+      className={`px-3 py-1 border rounded ${
+        currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-white hover:bg-blue-100"
+      }`}
+    >
+      {i + 1}
+    </button>
+  ))}
+
+  {/* Tombol Next */}
+  <button
+    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+    disabled={currentPage === totalPages}
+    className={`px-3 py-1 border rounded ${
+      currentPage === totalPages ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-white hover:bg-blue-100"
+    }`}
+  >
+    Next →
+  </button>
+</div>
+
     </div>
   );
 }

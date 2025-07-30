@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 
 export default function CardCerti() {
