@@ -10,7 +10,7 @@ export default function CertificateTable() {
   const [statusFilter, setStatusFilter] = useState("Semua");
 
   useEffect(() => {
-    fetch("https://script.google.com/macros/s/AKfycbxloPR-cq5K-fydDQHWzUxWGkKdFYEsEYo9bSkHtREhO6IEuvUXpk6pPgBns19jZKnN6w/exec")
+    fetch("https://script.google.com/macros/s/AKfycbwXsfbvs-0iFNl2MrWaRIuHvCuapkxiRJ-E1iw0DfH7yEZzc_Pg6lbM0c7OKSnHGWD3zw/exec")
       .then((res) => res.json())
       .then((result) => {
         setData(result);
@@ -161,7 +161,7 @@ export default function CertificateTable() {
       </div>
       <div className="mt-6 flex justify-center">
   <a
-    href="/tambah"
+    href="/TambahData"
     className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
   >
     + Tambah Data Baru

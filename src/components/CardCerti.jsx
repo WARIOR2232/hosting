@@ -10,7 +10,6 @@ export default function CardCerti() {
       .then((res) => res.json())
       .then((result) => {
         setData(result);
-        setLoading(false);
       });
   }, []);
 

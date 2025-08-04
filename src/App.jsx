@@ -7,6 +7,8 @@ import Investments from './pages/investments';
 import Settings from './pages/settings';
 import Login from './pages/login';
 import PrivateRoute from './PrivateRoute';
+import TambahData from './pages/TambahData';
+
 
 
 function App() {
@@ -30,6 +32,7 @@ function App() {
           <Route path="/tenants" element={<Tenants />} />
           <Route path="/investments" element={<Investments />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/TambahData" element={<TambahData />} />
         </Route>
       </Routes>
     </BrowserRouter>
