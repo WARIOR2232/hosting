@@ -166,7 +166,7 @@ export default function CertificateTable() {
   >
     + Tambah Data Baru
   </a>
-</div>
+</div> 
     </div>
   );
 }
