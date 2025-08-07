@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function CertificateTable() {
   const [data, setData] = useState([]);
@@ -8,9 +9,10 @@ export default function CertificateTable() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("Semua");
+  const navigate = useNavigate(); // Tambahkan di dalam komponen
 
   useEffect(() => {
-    fetch("https://script.google.com/macros/s/AKfycbxloPR-cq5K-fydDQHWzUxWGkKdFYEsEYo9bSkHtREhO6IEuvUXpk6pPgBns19jZKnN6w/exec")
+    fetch("https://script.google.com/macros/s/AKfycbwXsfbvs-0iFNl2MrWaRIuHvCuapkxiRJ-E1iw0DfH7yEZzc_Pg6lbM0c7OKSnHGWD3zw/exec")
       .then((res) => res.json())
       .then((result) => {
         setData(result);
@@ -160,12 +162,12 @@ export default function CertificateTable() {
         </button>
       </div>
       <div className="mt-6 flex justify-center">
-  <a
-    href="/tambah"
-    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-  >
-    + Tambah Data Baru
-  </a>
+ <button
+  onClick={() => navigate("/TambahData")}
+  className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+>
+  + Tambah Data Baru
+</button>
 </div> 
     </div>
   );
