@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Select from "react-select";
 
 export default function CertificateTable() {
   const [data, setData] = useState([]);
@@ -6,8 +7,11 @@ export default function CertificateTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
 
+  // State untuk filter dan pencarian
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("Semua");
+  const [selectedPT, setSelectedPT] = useState("Semua");
+  const [selectedKualifikasi, setSelectedKualifikasi] = useState("Semua");
 
   useEffect(() => {
     fetch("https://script.google.com/macros/s/AKfycbwXsfbvs-0iFNl2MrWaRIuHvCuapkxiRJ-E1iw0DfH7yEZzc_Pg6lbM0c7OKSnHGWD3zw/exec")
@@ -40,11 +44,20 @@ export default function CertificateTable() {
     });
   };
 
-  // 🔍 Filter data berdasarkan nama dan status
+  // 🔍 Ambil daftar unik Nama PT & Kualifikasi untuk dropdown
+  const uniqueNamaPT = ["Semua", ...new Set(data.map((item) => item.NamaPT))];
+  const uniqueKualifikasi = ["Semua", ...new Set(data.map((item) => item.Kualifikasi))];
+
+  // 🔍 Filter data berdasarkan nama, status, PT, dan kualifikasi
   const filteredData = data.filter((row) => {
     const matchesName = row.NamaPemilik.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "Semua" || row.Status.toLowerCase() === statusFilter.toLowerCase();
-    return matchesName && matchesStatus;
+    const matchesStatus =
+      statusFilter === "Semua" || row.Status.toLowerCase() === statusFilter.toLowerCase();
+    const matchesPT = selectedPT === "Semua" || row.NamaPT === selectedPT;
+    const matchesKualifikasi =
+      selectedKualifikasi === "Semua" || row.Kualifikasi === selectedKualifikasi;
+
+    return matchesName && matchesStatus && matchesPT && matchesKualifikasi;
   });
 
   // 🔢 Pagination
@@ -58,8 +71,9 @@ export default function CertificateTable() {
     <div className="mt-6 bg-white rounded-lg shadow p-4 overflow-x-auto">
       <h2 className="text-xl font-semibold mb-4">Certificate List</h2>
 
-      {/* 🔍 Search & Filter */}
-      <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      {/* 🔍 Search & Filter Section */}
+      <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 flex-wrap">
+        {/* Input pencarian nama */}
         <input
           type="text"
           placeholder="Cari berdasarkan nama pemilik..."
@@ -68,9 +82,36 @@ export default function CertificateTable() {
             setSearchTerm(e.target.value);
             setCurrentPage(1);
           }}
-          className="border p-2 rounded w-full md:w-1/2"
+          className="border p-2 rounded w-full md:w-1/3"
         />
 
+        {/* Filter Nama PT */}
+        <Select
+          className="w-full md:w-1/3"
+          options={uniqueNamaPT.map((pt) => ({ value: pt, label: pt }))}
+          onChange={(selected) => {
+            setSelectedPT(selected?.value || "Semua");
+            setCurrentPage(1);
+          }}
+          placeholder="Pilih atau ketik Nama PT..."
+          isSearchable
+          isClearable
+        />
+
+        {/* Filter Kualifikasi */}
+        <Select
+          className="w-full md:w-1/3"
+          options={uniqueKualifikasi.map((k) => ({ value: k, label: k }))}
+          onChange={(selected) => {
+            setSelectedKualifikasi(selected?.value || "Semua");
+            setCurrentPage(1);
+          }}
+          placeholder="Pilih atau ketik Kualifikasi..."
+          isSearchable
+          isClearable
+        />
+
+        {/* Filter Status */}
         <select
           value={statusFilter}
           onChange={(e) => {
@@ -113,7 +154,11 @@ export default function CertificateTable() {
               <td className="px-4 py-2 text-center">{formatDate(row.TanggalBerakhir)}</td>
               <td className="px-1 py-2 text-center">{row.SisaHari}</td>
               <td className="px-1 py-2 text-center">
-                <span className={`text-xs font-semibold px-1 py-1 rounded-full ${getStatusStyle(row.Status)}`}>
+                <span
+                  className={`text-xs font-semibold px-1 py-1 rounded-full ${getStatusStyle(
+                    row.Status
+                  )}`}
+                >
                   {row.Status}
                 </span>
               </td>
@@ -122,51 +167,56 @@ export default function CertificateTable() {
         </tbody>
       </table>
 
-      {/* ⏩ Pagination dengan panah */}
+      {/* ⏩ Pagination */}
       <div className="mt-4 flex justify-center gap-2 flex-wrap">
-        {/* Tombol Previous */}
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
           className={`px-3 py-1 border rounded ${
-            currentPage === 1 ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-white hover:bg-blue-100"
+            currentPage === 1
+              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+              : "bg-white hover:bg-blue-100"
           }`}
         >
           ← Prev
         </button>
 
-        {/* Nomor Halaman */}
         {Array.from({ length: totalPages }, (_, i) => (
           <button
             key={i}
             onClick={() => setCurrentPage(i + 1)}
             className={`px-3 py-1 border rounded ${
-              currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-white hover:bg-blue-100"
+              currentPage === i + 1
+                ? "bg-blue-500 text-white"
+                : "bg-white hover:bg-blue-100"
             }`}
           >
             {i + 1}
           </button>
         ))}
 
-        {/* Tombol Next */}
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
           className={`px-3 py-1 border rounded ${
-            currentPage === totalPages ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-white hover:bg-blue-100"
+            currentPage === totalPages
+              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+              : "bg-white hover:bg-blue-100"
           }`}
         >
           Next →
         </button>
       </div>
+
+      {/* ➕ Tombol Tambah Data */}
       <div className="mt-6 flex justify-center">
-  <a
-    href="/TambahData"
-    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-  >
-    + Tambah Data Baru
-  </a>
-</div>
+        <a
+          href="/TambahData"
+          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+        >
+          + Tambah Data Baru
+        </a>
+      </div>
     </div>
   );
 }
