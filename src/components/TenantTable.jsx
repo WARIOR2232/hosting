@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import EditModal from "../components/EditModal";
 import Select from "react-select";
 
 export default function CertificateTable() {
@@ -13,15 +15,33 @@ export default function CertificateTable() {
   const [selectedPT, setSelectedPT] = useState("Semua");
   const [selectedKualifikasi, setSelectedKualifikasi] = useState("Semua");
 
-  useEffect(() => {
-    fetch("https://script.google.com/macros/s/AKfycbwXsfbvs-0iFNl2MrWaRIuHvCuapkxiRJ-E1iw0DfH7yEZzc_Pg6lbM0c7OKSnHGWD3zw/exec")
+  // state untuk modal edit
+  const [editingRow, setEditingRow] = useState(null);
+
+  const navigate = useNavigate();
+
+  const SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycbwQfYpbRkn1Ndq5dt22jcJw1ASrZV9whvVbHI6Q48aEtz4IivFhQYiXoxhmjXIMucP_fA/exec";
+
+  // 🔄 Ambil data dari Google Apps Script
+  const fetchData = () => {
+    fetch(SCRIPT_URL)
       .then((res) => res.json())
       .then((result) => {
         setData(result);
         setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Gagal memuat data:", err);
+        setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
+  // 🔤 Fungsi bantu
   const getStatusStyle = (status) => {
     switch (status?.toLowerCase()) {
       case "aktif":
@@ -37,6 +57,7 @@ export default function CertificateTable() {
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
+    if (isNaN(date)) return "-";
     return date.toLocaleDateString("id-ID", {
       day: "2-digit",
       month: "long",
@@ -44,19 +65,39 @@ export default function CertificateTable() {
     });
   };
 
-  // 🔍 Ambil daftar unik Nama PT & Kualifikasi untuk dropdown
+  // 🗑️ Hapus data
+  const handleDelete = async (row) => {
+    if (window.confirm(`Yakin ingin menghapus data ${row.NamaPemilik}?`)) {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: new URLSearchParams({
+          action: "delete",
+          rowNumber: row.rowNumber, // penting: ini dari API doGet
+        }),
+      });
+      fetchData();
+    }
+  };
+
+  // ✏️ Edit data → buka modal
+  const handleEdit = (row) => {
+    setEditingRow(row);
+  };
+
+  // 🧩 Dapatkan daftar unik Nama PT dan Kualifikasi
   const uniqueNamaPT = ["Semua", ...new Set(data.map((item) => item.NamaPT))];
   const uniqueKualifikasi = ["Semua", ...new Set(data.map((item) => item.Kualifikasi))];
 
-  // 🔍 Filter data berdasarkan nama, status, PT, dan kualifikasi
+  // 🔍 Filter
   const filteredData = data.filter((row) => {
-    const matchesName = row.NamaPemilik.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesName = row.NamaPemilik?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
-      statusFilter === "Semua" || row.Status.toLowerCase() === statusFilter.toLowerCase();
-    const matchesPT = selectedPT === "Semua" || row.NamaPT === selectedPT;
+      statusFilter === "Semua" ||
+      row.Status?.toLowerCase() === statusFilter.toLowerCase();
+    const matchesPT =
+      selectedPT === "Semua" || row.NamaPT === selectedPT;
     const matchesKualifikasi =
       selectedKualifikasi === "Semua" || row.Kualifikasi === selectedKualifikasi;
-
     return matchesName && matchesStatus && matchesPT && matchesKualifikasi;
   });
 
@@ -127,7 +168,7 @@ export default function CertificateTable() {
         </select>
       </div>
 
-      {/* 🧾 Tabel Data Sertifikat */}
+      {/* 🧾 Tabel Sertifikat */}
       <table className="min-w-full table-auto text-sm text-left">
         <thead className="bg-gray-100 text-gray-700">
           <tr>
@@ -140,6 +181,7 @@ export default function CertificateTable() {
             <th className="px-9 py-3">Tanggal Berakhir</th>
             <th className="px-6 py-3">Sisa Hari</th>
             <th className="px-9 py-3">Status</th>
+            <th className="px-9 py-3 text-center">Aksi</th>
           </tr>
         </thead>
         <tbody>
@@ -155,12 +197,26 @@ export default function CertificateTable() {
               <td className="px-1 py-2 text-center">{row.SisaHari}</td>
               <td className="px-1 py-2 text-center">
                 <span
-                  className={`text-xs font-semibold px-1 py-1 rounded-full ${getStatusStyle(
+                  className={`text-xs font-semibold px-2 py-1 rounded-full ${getStatusStyle(
                     row.Status
                   )}`}
                 >
                   {row.Status}
                 </span>
+              </td>
+              <td className="px-2 py-2 flex gap-2 justify-center">
+                <button
+                  onClick={() => handleEdit(row)}
+                  className="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(row)}
+                  className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
@@ -180,7 +236,6 @@ export default function CertificateTable() {
         >
           ← Prev
         </button>
-
         {Array.from({ length: totalPages }, (_, i) => (
           <button
             key={i}
@@ -194,7 +249,6 @@ export default function CertificateTable() {
             {i + 1}
           </button>
         ))}
-
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
@@ -208,15 +262,35 @@ export default function CertificateTable() {
         </button>
       </div>
 
-      {/* ➕ Tombol Tambah Data */}
+      {/* ➕ Tambah Data */}
       <div className="mt-6 flex justify-center">
-        <a
-          href="/TambahData"
+        <button
+          onClick={() => navigate("/TambahData")}
           className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
         >
           + Tambah Data Baru
-        </a>
+        </button>
       </div>
+
+      {/* 📝 Edit Modal */}
+      {editingRow && (
+        <EditModal
+          data={editingRow}
+          onClose={() => setEditingRow(null)}
+          onSave={async (updatedData) => {
+            await fetch(SCRIPT_URL, {
+              method: "POST",
+              body: new URLSearchParams({
+                action: "edit",
+                rowNumber: updatedData.rowNumber,
+                ...updatedData,
+              }),
+            });
+            setEditingRow(null);
+            fetchData();
+          }}
+        />
+      )}
     </div>
   );
 }

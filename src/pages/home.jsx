@@ -40,7 +40,7 @@ export default function Home() {
 
         {/* Ikon Notifikasi */}
         <Link
-          to="/notifications"
+          to="/investments"
           className="relative p-2 rounded-full hover:bg-gray-100 transition duration-200 ease-in-out"
         >
           <Bell className="w-6 h-6 text-gray-700" />
