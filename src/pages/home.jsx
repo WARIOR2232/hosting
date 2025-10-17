@@ -3,6 +3,7 @@ import { Bell } from "lucide-react";
 import CertificateTable from "../components/TenantTable";
 import CardCerti from "../components/CardCerti";
 import { Link } from "react-router-dom";
+import CardCerti2 from "../components/CardCerti2";
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -58,6 +59,7 @@ export default function Home() {
 
       {/* Komponen lain */}
       <CardCerti data={data} />
+      <CardCerti2 data={data} />
       <CertificateTable data={data} />
     </section>
   );
