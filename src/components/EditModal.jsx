@@ -1,7 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function EditModal({ data, onClose, onSave }) {
   const [formData, setFormData] = useState({ ...data });
+
+  // Pastikan tanggal diformat ke yyyy-mm-dd agar bisa tampil di input type="date"
+  useEffect(() => {
+    if (data.TanggalBerlaku)
+      data.TanggalBerlaku = formatDate(data.TanggalBerlaku);
+    if (data.TanggalBerakhir)
+      data.TanggalBerakhir = formatDate(data.TanggalBerakhir);
+    setFormData({ ...data });
+  }, [data]);
+
+  const formatDate = (dateStr) => {
+    const d = new Date(dateStr);
+    if (isNaN(d)) return "";
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -23,6 +41,7 @@ export default function EditModal({ data, onClose, onSave }) {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-3">
+          {/* Nama Pemilik */}
           <div>
             <label className="block text-sm font-medium">Nama Pemilik</label>
             <input
@@ -35,6 +54,7 @@ export default function EditModal({ data, onClose, onSave }) {
             />
           </div>
 
+          {/* Nama PT */}
           <div>
             <label className="block text-sm font-medium">Nama PT</label>
             <input
@@ -47,6 +67,7 @@ export default function EditModal({ data, onClose, onSave }) {
             />
           </div>
 
+          {/* Brand */}
           <div>
             <label className="block text-sm font-medium">Brand</label>
             <input
@@ -58,6 +79,7 @@ export default function EditModal({ data, onClose, onSave }) {
             />
           </div>
 
+          {/* Kualifikasi */}
           <div>
             <label className="block text-sm font-medium">Kualifikasi</label>
             <input
@@ -69,6 +91,31 @@ export default function EditModal({ data, onClose, onSave }) {
             />
           </div>
 
+          {/* Tanggal Berlaku */}
+          <div>
+            <label className="block text-sm font-medium">Tanggal Berlaku</label>
+            <input
+              type="date"
+              name="TanggalBerlaku"
+              value={formData.TanggalBerlaku || ""}
+              onChange={handleChange}
+              className="w-full border rounded p-2"
+            />
+          </div>
+
+          {/* Tanggal Berakhir */}
+          <div>
+            <label className="block text-sm font-medium">Tanggal Berakhir</label>
+            <input
+              type="date"
+              name="TanggalBerakhir"
+              value={formData.TanggalBerakhir || ""}
+              onChange={handleChange}
+              className="w-full border rounded p-2"
+            />
+          </div>
+
+          {/* Tombol */}
           <div className="flex justify-end gap-2 pt-4">
             <button
               type="button"

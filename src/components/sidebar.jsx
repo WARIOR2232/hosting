@@ -14,7 +14,7 @@ export default function Sidebar({ isOpen, onClose }) {
   const menu = [
     { to: '/',           label: 'Dashboard',   icon: Home },
     { to: '/tenants',    label: 'Tenants',     icon: Users },
-    { to: '/investments',label: 'Notifikasi', icon: Bell },
+    { to: '/NotificationPage',label: 'Notifikasi', icon: Bell },
     { to: '/settings',   label: 'Settings',    icon: Settings },
     { to: '/TambahData',   label: 'Tambah data',    icon: Settings },
   ];
