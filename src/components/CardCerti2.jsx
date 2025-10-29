@@ -18,7 +18,7 @@ export default function CardCerti2() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch("https://script.google.com/macros/s/AKfycbxN992z4Uy9eoPrCAl9wPQ0aDGIs2A50adQD2FDyA3ElCzM344kuACGGm2Za3V9NT23Qg/exec")
+    fetch("https://script.google.com/macros/s/AKfycbypnD-6X_EWw7EVg-E-ZQR6RtyRzU-XBQvElZ8YWMbJcsdKvwustsRn6YFYFbjPDfAp/exec")
       .then((res) => res.json())
       .then((result) => setData(result));
   }, []);
@@ -58,7 +58,7 @@ export default function CardCerti2() {
         <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
           <div className="flex items-center gap-2 mb-4">
             <Award className="w-6 h-6 text-blue-600" />
-            <h3 className="text-gray-700 font-semibold text-lg">Kualifikasi Terbanyak</h3>
+            <h3 className="text-gray-700 font-semibold text-lg"> SIP Berdasarkan Kualifikasi</h3>
           </div>
 
           <ResponsiveContainer width="100%" height={280}>
@@ -95,7 +95,7 @@ export default function CardCerti2() {
         <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
           <div className="flex items-center gap-2 mb-4">
             <Layers className="w-6 h-6 text-yellow-600" />
-            <h3 className="text-gray-700 font-semibold text-lg">Brand Terbanyak</h3>
+            <h3 className="text-gray-700 font-semibold text-lg">SIP Berdasarkan Brand</h3>
           </div>
 
           <ResponsiveContainer width="100%" height={280}>

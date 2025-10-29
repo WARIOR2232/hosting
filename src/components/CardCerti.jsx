@@ -6,7 +6,7 @@ export default function CardCerti() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch("https://script.google.com/macros/s/AKfycbxN992z4Uy9eoPrCAl9wPQ0aDGIs2A50adQD2FDyA3ElCzM344kuACGGm2Za3V9NT23Qg/exec")
+    fetch("https://script.google.com/macros/s/AKfycbypnD-6X_EWw7EVg-E-ZQR6RtyRzU-XBQvElZ8YWMbJcsdKvwustsRn6YFYFbjPDfAp/exec")
       .then((res) => res.json())
       .then((result) => setData(result));
   }, []);
@@ -34,7 +34,7 @@ export default function CardCerti() {
           {/* Header: icon + title */}
           <div className="flex items-center justify-center gap-2 mb-4">
             <FileText className="w-8 h-8 text-green-600" />
-            <h3 className="text-gray-700 font-semibold text-5xl">Total Certificates</h3>
+            <h3 className="text-gray-700 font-semibold text-3xl">Total Certificates</h3>
           </div>
           <h2 className="text-7xl font-bold text-gray-800 mt-8">{total}</h2>
         </div>
@@ -42,8 +42,8 @@ export default function CardCerti() {
         {/* 🟨 CARD 2 */}
         <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center justify-start text-center transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:bg-green-50 cursor-pointer min-h-[320px]">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Clock className="w-10 h-10 text-yellow-500" />
-            <h3 className="text-gray-700 font-semibold text-5xl">Expiring Soon</h3>
+            <Clock className="w-9 h-9 text-yellow-500" />
+            <h3 className="text-gray-700 font-semibold text-3xl">Expiring Soon</h3>
           </div>
           <div className="leading-tight mt-6 space-y-2">
             <p className="text-4xl font-semibold text-yellow-500">{expiring} Akan Expired</p>
@@ -55,8 +55,8 @@ export default function CardCerti() {
         {/* 🟦 CARD 3 */}
         <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center justify-start text-center transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:bg-green-50 cursor-pointer min-h-[320px]">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <BarChart3 className="w-9 h-9 text-blue-500" />
-            <h3 className="text-gray-700 font-semibold text-5xl">Status</h3>
+            <BarChart3 className="w-7 h-7 text-blue-500" />
+            <h3 className="text-gray-700 font-semibold text-3xl">Status</h3>
           </div>
           <PieChart width={220} height={200}>
             <Pie

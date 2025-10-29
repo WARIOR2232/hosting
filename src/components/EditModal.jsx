@@ -1,138 +1,124 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function EditModal({ data, onClose, onSave }) {
-  const [formData, setFormData] = useState({ ...data });
+export default function TambahData() {
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    NomorSIP: "",
+    NamaPemilik: "",
+    NamaPT: "",
+    Brand: "",
+    Kualifikasi: "",
+    TanggalBerlaku: "",
+    TanggalBerakhir: "",
+    Kewarganegaraan: "",
+  });
 
-  // Pastikan tanggal diformat ke yyyy-mm-dd agar bisa tampil di input type="date"
-  useEffect(() => {
-    if (data.TanggalBerlaku)
-      data.TanggalBerlaku = formatDate(data.TanggalBerlaku);
-    if (data.TanggalBerakhir)
-      data.TanggalBerakhir = formatDate(data.TanggalBerakhir);
-    setFormData({ ...data });
-  }, [data]);
-
-  const formatDate = (dateStr) => {
-    const d = new Date(dateStr);
-    if (isNaN(d)) return "";
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const dd = String(d.getDate()).padStart(2, "0");
-    return `${yyyy}-${mm}-${dd}`;
-  };
+  const [showSuccess, setShowSuccess] = useState(false); // Pop-up sukses
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await onSave(formData);
+
+    try {
+      // 🔗 Ganti dengan URL Apps Script kamu
+      const response = await fetch(
+        "https://script.google.com/macros/s/AKfycbwXsfbvs-0iFNl2MrWaRIuHvCuapkxiRJ-E1iw0DfH7yEZzc_Pg6lbM0c7OKSnHGWD3zw/exec",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams(form).toString(),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.result === "Success") {
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          navigate("/"); // kembali ke halaman utama
+        }, 2000);
+      } else {
+        alert("❌ Gagal: " + result.message);
+      }
+    } catch (error) {
+      console.error("Gagal kirim data", error);
+      alert("⚠️ Terjadi kesalahan saat menambahkan data.");
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative">
-        <h2 className="text-lg font-semibold mb-4 text-center">
-          Edit Data Sertifikat
-        </h2>
+    <div className="max-w-xl mx-auto mt-8 p-6 bg-white shadow rounded-lg relative">
+      <h2 className="text-xl font-bold mb-4 text-center">
+        Tambah Data Sertifikat
+      </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-3">
-          {/* Nama Pemilik */}
-          <div>
-            <label className="block text-sm font-medium">Nama Pemilik</label>
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
+        {[
+          { label: "Nomor SIP", name: "NomorSIP" },
+          { label: "Nama Pemilik", name: "NamaPemilik" },
+          { label: "Nama PT", name: "NamaPT" },
+          { label: "Brand", name: "Brand" },
+          { label: "Kualifikasi", name: "Kualifikasi" },
+          { label: "Tanggal Berlaku", name: "TanggalBerlaku", type: "date" },
+          { label: "Tanggal Berakhir", name: "TanggalBerakhir", type: "date" },
+        ].map(({ label, name, type = "text" }) => (
+          <div key={name}>
+            <label className="block text-sm font-medium mb-1">{label}</label>
             <input
-              type="text"
-              name="NamaPemilik"
-              value={formData.NamaPemilik || ""}
+              type={type}
+              name={name}
+              value={form[name]}
               onChange={handleChange}
-              className="w-full border rounded p-2"
               required
+              className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-400"
             />
           </div>
+        ))}
 
-          {/* Nama PT */}
-          <div>
-            <label className="block text-sm font-medium">Nama PT</label>
-            <input
-              type="text"
-              name="NamaPT"
-              value={formData.NamaPT || ""}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-              required
-            />
-          </div>
+        {/* 🟢 Dropdown Kewarganegaraan */}
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Kewarganegaraan
+          </label>
+          <select
+            name="Kewarganegaraan"
+            value={form.Kewarganegaraan}
+            onChange={handleChange}
+            required
+            className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-400"
+          >
+            <option value="">-- Pilih --</option>
+            <option value="WNI">WNI</option>
+            <option value="WNA">WNA</option>
+          </select>
+        </div>
 
-          {/* Brand */}
-          <div>
-            <label className="block text-sm font-medium">Brand</label>
-            <input
-              type="text"
-              name="Brand"
-              value={formData.Brand || ""}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
-          </div>
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+        >
+          Simpan
+        </button>
+      </form>
 
-          {/* Kualifikasi */}
-          <div>
-            <label className="block text-sm font-medium">Kualifikasi</label>
-            <input
-              type="text"
-              name="Kualifikasi"
-              value={formData.Kualifikasi || ""}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
+      {/* 🎉 Pop-up sukses */}
+      {showSuccess && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h3 className="text-lg font-semibold text-green-600 mb-2">
+              ✅ Data Berhasil Ditambahkan!
+            </h3>
+            <p className="text-gray-600">Anda akan diarahkan ke halaman utama...</p>
           </div>
-
-          {/* Tanggal Berlaku */}
-          <div>
-            <label className="block text-sm font-medium">Tanggal Berlaku</label>
-            <input
-              type="date"
-              name="TanggalBerlaku"
-              value={formData.TanggalBerlaku || ""}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
-          </div>
-
-          {/* Tanggal Berakhir */}
-          <div>
-            <label className="block text-sm font-medium">Tanggal Berakhir</label>
-            <input
-              type="date"
-              name="TanggalBerakhir"
-              value={formData.TanggalBerakhir || ""}
-              onChange={handleChange}
-              className="w-full border rounded p-2"
-            />
-          </div>
-
-          {/* Tombol */}
-          <div className="flex justify-end gap-2 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded"
-            >
-              Batal
-            </button>
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-            >
-              Simpan
-            </button>
-          </div>
-        </form>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

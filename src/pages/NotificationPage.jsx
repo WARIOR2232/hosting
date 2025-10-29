@@ -23,7 +23,7 @@ export default function NotificationPage() {
   // 🔹 Ambil data dari Google Sheets
   useEffect(() => {
     fetch(
-      "https://script.google.com/macros/s/AKfycbwQfYpbRkn1Ndq5dt22jcJw1ASrZV9whvVbHI6Q48aEtz4IivFhQYiXoxhmjXIMucP_fA/exec"
+      "https://script.google.com/macros/s/AKfycbypnD-6X_EWw7EVg-E-ZQR6RtyRzU-XBQvElZ8YWMbJcsdKvwustsRn6YFYFbjPDfAp/exec" //sama dengan tenant tabel
     )
       .then((res) => res.json())
       .then((result) => {

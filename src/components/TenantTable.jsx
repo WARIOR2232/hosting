@@ -9,21 +9,17 @@ export default function CertificateTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
 
-  // State untuk filter dan pencarian
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("Semua");
   const [selectedPT, setSelectedPT] = useState("Semua");
   const [selectedKualifikasi, setSelectedKualifikasi] = useState("Semua");
 
-  // state untuk modal edit
   const [editingRow, setEditingRow] = useState(null);
-
   const navigate = useNavigate();
 
   const SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbwQfYpbRkn1Ndq5dt22jcJw1ASrZV9whvVbHI6Q48aEtz4IivFhQYiXoxhmjXIMucP_fA/exec";
+    "https://script.google.com/macros/s/AKfycbypnD-6X_EWw7EVg-E-ZQR6RtyRzU-XBQvElZ8YWMbJcsdKvwustsRn6YFYFbjPDfAp/exec";
 
-  // 🔄 Ambil data dari Google Apps Script
   const fetchData = () => {
     fetch(SCRIPT_URL)
       .then((res) => res.json())
@@ -41,7 +37,6 @@ export default function CertificateTable() {
     fetchData();
   }, []);
 
-  // 🔤 Fungsi bantu
   const getStatusStyle = (status) => {
     switch (status?.toLowerCase()) {
       case "aktif":
@@ -65,30 +60,26 @@ export default function CertificateTable() {
     });
   };
 
-  // 🗑️ Hapus data
   const handleDelete = async (row) => {
     if (window.confirm(`Yakin ingin menghapus data ${row.NamaPemilik}?`)) {
       await fetch(SCRIPT_URL, {
         method: "POST",
         body: new URLSearchParams({
           action: "delete",
-          rowNumber: row.rowNumber, // penting: ini dari API doGet
+          rowNumber: row.rowNumber,
         }),
       });
       fetchData();
     }
   };
 
-  // ✏️ Edit data → buka modal
   const handleEdit = (row) => {
     setEditingRow(row);
   };
 
-  // 🧩 Dapatkan daftar unik Nama PT dan Kualifikasi
   const uniqueNamaPT = ["Semua", ...new Set(data.map((item) => item.NamaPT))];
   const uniqueKualifikasi = ["Semua", ...new Set(data.map((item) => item.Kualifikasi))];
 
-  // 🔍 Filter
   const filteredData = data.filter((row) => {
     const matchesName = row.NamaPemilik?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
@@ -101,7 +92,6 @@ export default function CertificateTable() {
     return matchesName && matchesStatus && matchesPT && matchesKualifikasi;
   });
 
-  // 🔢 Pagination
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
@@ -112,9 +102,8 @@ export default function CertificateTable() {
     <div className="mt-6 bg-white rounded-lg shadow p-4 overflow-x-auto">
       <h2 className="text-xl font-semibold mb-4">Certificate List</h2>
 
-      {/* 🔍 Search & Filter Section */}
+      {/* 🔍 Filter dan Search */}
       <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 flex-wrap">
-        {/* Input pencarian nama */}
         <input
           type="text"
           placeholder="Cari berdasarkan nama pemilik..."
@@ -126,7 +115,6 @@ export default function CertificateTable() {
           className="border p-2 rounded w-full md:w-1/3"
         />
 
-        {/* Filter Nama PT */}
         <Select
           className="w-full md:w-1/3"
           options={uniqueNamaPT.map((pt) => ({ value: pt, label: pt }))}
@@ -139,7 +127,6 @@ export default function CertificateTable() {
           isClearable
         />
 
-        {/* Filter Kualifikasi */}
         <Select
           className="w-full md:w-1/3"
           options={uniqueKualifikasi.map((k) => ({ value: k, label: k }))}
@@ -152,7 +139,6 @@ export default function CertificateTable() {
           isClearable
         />
 
-        {/* Filter Status */}
         <select
           value={statusFilter}
           onChange={(e) => {
@@ -168,15 +154,17 @@ export default function CertificateTable() {
         </select>
       </div>
 
-      {/* 🧾 Tabel Sertifikat */}
+      {/* 🧾 Tabel Data */}
       <table className="min-w-full table-auto text-sm text-left">
         <thead className="bg-gray-100 text-gray-700">
           <tr>
             <th className="px-4 py-3">No</th>
+            <th className="px-4 py-3">Nomor SIP</th>
             <th className="px-4 py-3">Nama Pemilik</th>
-            <th className="px-3.5 py-3">Nama PT</th>
+            <th className="px-3.5 py-3">Pelaku Usaha</th>
             <th className="px-4 py-3">Brand</th>
             <th className="px-4 py-3">Kualifikasi</th>
+            <th className="px-4 py-3">Kewarganegaraan</th>
             <th className="px-9 py-3">Tanggal Berlaku</th>
             <th className="px-9 py-3">Tanggal Berakhir</th>
             <th className="px-6 py-3">Sisa Hari</th>
@@ -188,10 +176,12 @@ export default function CertificateTable() {
           {paginatedData.map((row, index) => (
             <tr key={index} className="border-t border-gray-200 hover:bg-gray-50">
               <td className="px-4 py-2 text-center">{startIndex + index + 1}</td>
+              <td className="px-4 py-2">{row.NomorSIP}</td>
               <td className="px-4 py-2">{row.NamaPemilik}</td>
               <td className="px-4 py-2">{row.NamaPT}</td>
               <td className="px-4 py-2">{row.Brand}</td>
               <td className="px-4 py-2">{row.Kualifikasi}</td>
+              <td className="px-4 py-2 text-center">{row.Kewarganegaraan}</td>
               <td className="px-4 py-2 text-center">{formatDate(row.TanggalBerlaku)}</td>
               <td className="px-4 py-2 text-center">{formatDate(row.TanggalBerakhir)}</td>
               <td className="px-1 py-2 text-center">{row.SisaHari}</td>
@@ -236,6 +226,7 @@ export default function CertificateTable() {
         >
           ← Prev
         </button>
+
         {Array.from({ length: totalPages }, (_, i) => (
           <button
             key={i}
@@ -249,6 +240,7 @@ export default function CertificateTable() {
             {i + 1}
           </button>
         ))}
+
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
