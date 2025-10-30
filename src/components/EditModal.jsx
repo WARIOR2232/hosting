@@ -1,124 +1,190 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
-export default function TambahData() {
-  const navigate = useNavigate();
-  const [form, setForm] = useState({
+export default function EditModal({ isOpen, onClose, onSave, selectedData }) {
+  const [formData, setFormData] = useState({
     NomorSIP: "",
     NamaPemilik: "",
     NamaPT: "",
     Brand: "",
     Kualifikasi: "",
+    Kewarganegaraan: "",
     TanggalBerlaku: "",
     TanggalBerakhir: "",
-    Kewarganegaraan: "",
   });
 
-  const [showSuccess, setShowSuccess] = useState(false); // Pop-up sukses
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  // Fungsi format tanggal supaya input type=date bisa baca
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const parts = dateString.split(/[\/\-]/);
+    if (parts[0].length === 4) return dateString;
+    if (parts[2]?.length === 4)
+      return `${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(2, "0")}`;
+    return "";
   };
 
-  const handleSubmit = async (e) => {
+  // Isi formData berdasarkan data yang diklik
+  useEffect(() => {
+    if (selectedData) {
+      setFormData({
+        NomorSIP: selectedData.NomorSIP || "",
+        NamaPemilik: selectedData.NamaPemilik || "",
+        NamaPT: selectedData.NamaPT || "",
+        Brand: selectedData.Brand || "",
+        Kualifikasi: selectedData.Kualifikasi || "",
+        Kewarganegaraan: selectedData.Kewarganegaraan || "",
+        TanggalBerlaku: formatDate(selectedData.TanggalBerlaku),
+        TanggalBerakhir: formatDate(selectedData.TanggalBerakhir),
+      });
+    }
+  }, [selectedData]);
+
+  // Setiap input berubah
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Simpan data
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    try {
-      // 🔗 Ganti dengan URL Apps Script kamu
-      const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbwXsfbvs-0iFNl2MrWaRIuHvCuapkxiRJ-E1iw0DfH7yEZzc_Pg6lbM0c7OKSnHGWD3zw/exec",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: new URLSearchParams(form).toString(),
-        }
-      );
-
-      const result = await response.json();
-
-      if (result.result === "Success") {
-        setShowSuccess(true);
-        setTimeout(() => {
-          setShowSuccess(false);
-          navigate("/"); // kembali ke halaman utama
-        }, 2000);
-      } else {
-        alert("❌ Gagal: " + result.message);
-      }
-    } catch (error) {
-      console.error("Gagal kirim data", error);
-      alert("⚠️ Terjadi kesalahan saat menambahkan data.");
+    // Validasi tanggal wajib diisi
+    if (!formData.TanggalBerlaku || !formData.TanggalBerakhir) {
+      Swal.fire({
+        icon: "warning",
+        title: "Perhatian!",
+        text: "Tanggal Berlaku dan Tanggal Berakhir wajib diisi!",
+        confirmButtonColor: "#3085d6",
+      });
+      return;
     }
+
+    onSave(formData); // kirim ke TenantTable
+    Swal.fire({
+      icon: "success",
+      title: "Berhasil!",
+      text: "Data berhasil diperbarui.",
+      timer: 1800,
+      showConfirmButton: false,
+    });
   };
 
-  return (
-    <div className="max-w-xl mx-auto mt-8 p-6 bg-white shadow rounded-lg relative">
-      <h2 className="text-xl font-bold mb-4 text-center">
-        Tambah Data Sertifikat
-      </h2>
+  if (!isOpen) return null;
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
-        {[
-          { label: "Nomor SIP", name: "NomorSIP" },
-          { label: "Nama Pemilik", name: "NamaPemilik" },
-          { label: "Nama PT", name: "NamaPT" },
-          { label: "Brand", name: "Brand" },
-          { label: "Kualifikasi", name: "Kualifikasi" },
-          { label: "Tanggal Berlaku", name: "TanggalBerlaku", type: "date" },
-          { label: "Tanggal Berakhir", name: "TanggalBerakhir", type: "date" },
-        ].map(({ label, name, type = "text" }) => (
-          <div key={name}>
-            <label className="block text-sm font-medium mb-1">{label}</label>
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+      <div className="bg-white rounded-2xl p-6 w-full max-w-2xl shadow-lg">
+        <h2 className="text-xl font-bold text-blue-700 mb-4 flex items-center gap-2">
+          ✏️ Edit Data Sertifikat
+        </h2>
+
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+          <div className="col-span-2">
+            <label className="block text-sm font-medium">Nomor SIP</label>
             <input
-              type={type}
-              name={name}
-              value={form[name]}
+              type="text"
+              name="NomorSIP"
+              value={formData.NomorSIP}
               onChange={handleChange}
-              required
-              className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-400"
+              className="border rounded-md px-2 py-1 w-full"
+              readOnly
             />
           </div>
-        ))}
 
-        {/* 🟢 Dropdown Kewarganegaraan */}
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Kewarganegaraan
-          </label>
-          <select
-            name="Kewarganegaraan"
-            value={form.Kewarganegaraan}
-            onChange={handleChange}
-            required
-            className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-400"
-          >
-            <option value="">-- Pilih --</option>
-            <option value="WNI">WNI</option>
-            <option value="WNA">WNA</option>
-          </select>
-        </div>
-
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-        >
-          Simpan
-        </button>
-      </form>
-
-      {/* 🎉 Pop-up sukses */}
-      {showSuccess && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-            <h3 className="text-lg font-semibold text-green-600 mb-2">
-              ✅ Data Berhasil Ditambahkan!
-            </h3>
-            <p className="text-gray-600">Anda akan diarahkan ke halaman utama...</p>
+          <div>
+            <label className="block text-sm font-medium">Nama Pemilik</label>
+            <input
+              type="text"
+              name="NamaPemilik"
+              value={formData.NamaPemilik}
+              onChange={handleChange}
+              className="border rounded-md px-2 py-1 w-full"
+            />
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block text-sm font-medium">Nama PT</label>
+            <input
+              type="text"
+              name="NamaPT"
+              value={formData.NamaPT}
+              onChange={handleChange}
+              className="border rounded-md px-2 py-1 w-full"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium">Brand</label>
+            <input
+              type="text"
+              name="Brand"
+              value={formData.Brand}
+              onChange={handleChange}
+              className="border rounded-md px-2 py-1 w-full"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium">Kualifikasi</label>
+            <input
+              type="text"
+              name="Kualifikasi"
+              value={formData.Kualifikasi}
+              onChange={handleChange}
+              className="border rounded-md px-2 py-1 w-full"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium">Kewarganegaraan</label>
+            <input
+              type="text"
+              name="Kewarganegaraan"
+              value={formData.Kewarganegaraan}
+              onChange={handleChange}
+              className="border rounded-md px-2 py-1 w-full"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium">Tanggal Berlaku</label>
+            <input
+              type="date"
+              name="TanggalBerlaku"
+              value={formData.TanggalBerlaku}
+              onChange={handleChange}
+              className="border rounded-md px-2 py-1 w-full"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium">Tanggal Berakhir</label>
+            <input
+              type="date"
+              name="TanggalBerakhir"
+              value={formData.TanggalBerakhir}
+              onChange={handleChange}
+              className="border rounded-md px-2 py-1 w-full"
+              required
+            />
+          </div>
+
+          <div className="col-span-2 flex justify-end gap-2 mt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="bg-gray-300 text-gray-700 px-3 py-1 rounded"
+            >
+              Batal
+            </button>
+            <button type="submit" className="bg-blue-600 text-white px-3 py-1 rounded">
+              Simpan
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

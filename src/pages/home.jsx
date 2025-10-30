@@ -37,7 +37,7 @@ export default function Home() {
     <section className="p-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl sm:text-4xl font-semibold">DASHBOARD</h2>
+        <h2 className="text-xl sm:text-4xl font-semibold">DASHBOARD MONITORING SURAT IZIN PRAKTIK (SIP) - KEK SANUR</h2>
 
         {/* Ikon Notifikasi */}
         <Link
