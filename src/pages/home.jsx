@@ -11,14 +11,12 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Ambil data dari Google Sheets
     fetch("https://script.google.com/macros/s/AKfycbwXsfbvs-0iFNl2MrWaRIuHvCuapkxiRJ-E1iw0DfH7yEZzc_Pg6lbM0c7OKSnHGWD3zw/exec")
       .then((res) => res.json())
       .then((result) => {
         setData(result);
         setLoading(false);
 
-        // Hitung jumlah status "Akan Expired"
         const count = result.filter(
           (item) => item.Status?.toLowerCase() === "akan expired"
         ).length;
@@ -36,13 +34,15 @@ export default function Home() {
   return (
     <section className="p-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl sm:text-4xl font-semibold">DASHBOARD MONITORING SURAT IZIN PRAKTIK (SIP) - KEK SANUR</h2>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+        <h2 className="text-lg sm:text-3xl font-semibold leading-tight">
+          DASHBOARD MONITORING SURAT IZIN PRAKTIK (SIP) - KEK SANUR
+        </h2>
 
-        {/* Ikon Notifikasi */}
+        {/* Notifikasi */}
         <Link
           to="/NotificationPage"
-          className="relative p-2 rounded-full hover:bg-gray-100 transition duration-200 ease-in-out"
+          className="relative p-2 rounded-full hover:bg-gray-100 transition duration-200 ease-in-out self-end sm:self-auto"
         >
           <Bell className="w-6 h-6 text-gray-700" />
           {notifCount > 0 && (
@@ -53,14 +53,20 @@ export default function Home() {
         </Link>
       </div>
 
-      <p className="mb-6 text-sm sm:text-base">
+      <p className="mb-6 text-sm sm:text-base text-gray-600">
         Selamat Datang di Dashboard Monitoring SIP
       </p>
 
-      {/* Komponen lain */}
+      {/* Komponen statistik */}
       <CardCerti data={data} />
       <CardCerti2 data={data} />
-      <CertificateTable data={data} />
+
+      {/* 🧩 Bungkus tabel dengan overflow-x-auto agar bisa digeser di mobile */}
+      <div className="overflow-x-auto mt-6 rounded-lg shadow-sm">
+        <div className="min-w-[800px] sm:min-w-full">
+          <CertificateTable data={data} />
+        </div>
+      </div>
     </section>
   );
 }

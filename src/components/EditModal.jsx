@@ -46,29 +46,40 @@ export default function EditModal({ isOpen, onClose, onSave, selectedData }) {
   };
 
   // Simpan data
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ // Simpan data (PERBAIKAN)
+const handleSubmit = (e) => {
+  e.preventDefault();
 
-    // Validasi tanggal wajib diisi
-    if (!formData.TanggalBerlaku || !formData.TanggalBerakhir) {
-      Swal.fire({
-        icon: "warning",
-        title: "Perhatian!",
-        text: "Tanggal Berlaku dan Tanggal Berakhir wajib diisi!",
-        confirmButtonColor: "#3085d6",
-      });
-      return;
-    }
-
-    onSave(formData); // kirim ke TenantTable
+  // Validasi tanggal wajib diisi
+  if (!formData.TanggalBerlaku || !formData.TanggalBerakhir) {
     Swal.fire({
-      icon: "success",
-      title: "Berhasil!",
-      text: "Data berhasil diperbarui.",
-      timer: 1800,
-      showConfirmButton: false,
+      icon: "warning",
+      title: "Perhatian!",
+      text: "Tanggal Berlaku dan Tanggal Berakhir wajib diisi!",
+      confirmButtonColor: "#3085d6",
     });
-  };
+    return;
+  }
+
+  // ✅ Tambahkan rowNumber agar tidak menambah data baru
+  const payload = { ...formData, rowNumber: selectedData?.rowNumber };
+
+  // Kirim ke TenantTable
+  onSave(payload);
+
+  // Tutup modal setelah simpan
+  onClose();
+
+  // Opsional: tampilkan notifikasi sukses
+  Swal.fire({
+    icon: "success",
+    title: "Berhasil!",
+    text: "Data berhasil diperbarui.",
+    timer: 1800,
+    showConfirmButton: false,
+  });
+};
+
 
   if (!isOpen) return null;
 
