@@ -1,62 +1,46 @@
+// src/components/CertificateTable.jsx
+import { auth, db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EditModal from "../components/EditModal";
 import Select from "react-select";
-import * as XLSX from "xlsx"; // ✅ Tambahan Export to Excel
-import { saveAs } from "file-saver"; // ✅ Tambahan Export to Excel
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 export default function CertificateTable() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("Semua");
   const [selectedPT, setSelectedPT] = useState("Semua");
   const [selectedKualifikasi, setSelectedKualifikasi] = useState("Semua");
-
-  // modal / edit states
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
-
-  const itemsPerPage = 15;
+  const [role, setRole] = useState("user"); // ⬅️ Tambahan: deteksi role
   const navigate = useNavigate();
 
   const SCRIPT_URL =
     "https://script.google.com/macros/s/AKfycbypnD-6X_EWw7EVg-E-ZQR6RtyRzU-XBQvElZ8YWMbJcsdKvwustsRn6YFYFbjPDfAp/exec";
 
-    // ✅ Fetch data (ganti URL dengan Apps Script kamu)
+  // 🔹 Ambil role user dari Firestore
   useEffect(() => {
-    fetch("https://script.google.com/macros/s/AKfycbypnD-6X_EWw7EVg-E-ZQR6RtyRzU-XBQvElZ8YWMbJcsdKvwustsRn6YFYFbjPDfAp/exec") // contoh: https://script.google.com/macros/s/xxx/exec
-      .then((res) => res.json())
-      .then((result) => {
-        setData(result);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetch data:", err);
-        setLoading(false);
-      });
+    const getRole = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const ref = doc(db, "Users", user.uid);
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          setRole(snap.data().role || "user");
+        }
+      }
+    };
+    getRole();
   }, []);
 
-  // ✅ Tambahan Export to Excel
-  const handleExport = () => {
-    // 1️⃣ Ubah data JSON ke worksheet
-    const ws = XLSX.utils.json_to_sheet(data);
-
-    // 2️⃣ Buat workbook dan tambahkan worksheet
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "DataSIP");
-
-    // 3️⃣ Tulis workbook ke buffer
-    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-
-    // 4️⃣ Buat file dan trigger download
-    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(blob, "DataSIP.xlsx");
-  };
-  // fetch
+  // 🔹 Ambil data dari Apps Script
   const fetchData = () => {
     setLoading(true);
     fetch(SCRIPT_URL)
@@ -75,6 +59,17 @@ export default function CertificateTable() {
     fetchData();
   }, []);
 
+  // 🔹 Export ke Excel
+  const handleExport = () => {
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "DataSIP");
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, "DataSIP.xlsx");
+  };
+
+  // 🔹 Format tanggal
   const formatDateForTable = (isoString) => {
     if (!isoString) return "-";
     const d = new Date(isoString);
@@ -86,19 +81,7 @@ export default function CertificateTable() {
     });
   };
 
-  const toInputDate = (value) => {
-    if (!value) return "";
-    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
-    const d = new Date(value);
-    if (!isNaN(d)) return d.toISOString().split("T")[0];
-    const parts = String(value).split(/[\/\-\.]/);
-    if (parts.length === 3 && parts[2].length === 4) {
-      const [d1, m1, y1] = parts;
-      return `${y1}-${m1.padStart(2, "0")}-${d1.padStart(2, "0")}`;
-    }
-    return "";
-  };
-
+  // 🔹 Style status
   const getStatusStyle = (status) => {
     switch (status?.toLowerCase()) {
       case "aktif":
@@ -112,7 +95,7 @@ export default function CertificateTable() {
     }
   };
 
-  // delete
+  // 🔹 Aksi hanya untuk admin
   const handleDelete = async (row) => {
     if (!window.confirm(`Yakin ingin menghapus data ${row.NamaPemilik}?`)) return;
     try {
@@ -129,12 +112,11 @@ export default function CertificateTable() {
     }
   };
 
-  // open edit modal
   const handleEdit = (row) => {
     const prepared = {
       ...row,
-      TanggalBerlaku: toInputDate(row.TanggalBerlaku),
-      TanggalBerakhir: toInputDate(row.TanggalBerakhir),
+      TanggalBerlaku: new Date(row.TanggalBerlaku).toISOString().split("T")[0],
+      TanggalBerakhir: new Date(row.TanggalBerakhir).toISOString().split("T")[0],
     };
     setSelectedData(prepared);
     setIsEditModalOpen(true);
@@ -145,7 +127,6 @@ export default function CertificateTable() {
     setSelectedData(null);
   };
 
-  // save edited data (jaga tanggal berakhir tetap sama)
   const handleSaveEdit = async (updatedData) => {
     if (
       !updatedData.TanggalBerakhir ||
@@ -175,7 +156,8 @@ export default function CertificateTable() {
     }
   };
 
-  // filters
+  // 🔹 Filter
+  const itemsPerPage = 15;
   const uniqueNamaPT = ["Semua", ...new Set(data.map((i) => i.NamaPT))];
   const uniqueKualifikasi = ["Semua", ...new Set(data.map((i) => i.Kualifikasi))];
 
@@ -198,7 +180,8 @@ export default function CertificateTable() {
   return (
     <div className="mt-6 bg-white rounded-lg shadow p-4 overflow-x-auto">
       <h2 className="text-xl font-semibold mb-4">Certificate List</h2>
-       <div className="flex justify-between items-center mb-4">
+
+      <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Daftar Surat Izin Praktik</h2>
         <button
           onClick={handleExport}
@@ -208,7 +191,7 @@ export default function CertificateTable() {
         </button>
       </div>
 
-      {/* Filters */}
+      {/* Filter */}
       <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 flex-wrap">
         <input
           type="text"
@@ -275,7 +258,7 @@ export default function CertificateTable() {
             <th className="px-9 py-3">Tanggal Berakhir</th>
             <th className="px-6 py-3">Sisa Hari</th>
             <th className="px-9 py-3">Status</th>
-            <th className="px-9 py-3 text-center">Aksi</th>
+            {role === "admin" && <th className="px-9 py-3 text-center">Aksi</th>}
           </tr>
         </thead>
         <tbody>
@@ -292,24 +275,32 @@ export default function CertificateTable() {
               <td className="px-4 py-2 text-center">{formatDateForTable(row.TanggalBerakhir)}</td>
               <td className="px-1 py-2 text-center">{row.SisaHari}</td>
               <td className="px-1 py-2 text-center">
-                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${getStatusStyle(row.Status)}`}>
+                <span
+                  className={`text-xs font-semibold px-2 py-1 rounded-full ${getStatusStyle(
+                    row.Status
+                  )}`}
+                >
                   {row.Status}
                 </span>
               </td>
-              <td className="px-2 py-2 flex gap-2 justify-center">
-                <button
-                  onClick={() => handleEdit(row)}
-                  className="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(row)}
-                  className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600"
-                >
-                  Delete
-                </button>
-              </td>
+
+              {/* Aksi hanya admin */}
+              {role === "admin" && (
+                <td className="px-2 py-2 flex gap-2 justify-center">
+                  <button
+                    onClick={() => handleEdit(row)}
+                    className="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(row)}
+                    className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600"
+                  >
+                    Delete
+                  </button>
+                </td>
+              )}
             </tr>
           ))}
           {paginatedData.length === 0 && (
@@ -328,7 +319,9 @@ export default function CertificateTable() {
           onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
           disabled={currentPage === 1}
           className={`px-3 py-1 border rounded ${
-            currentPage === 1 ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-white hover:bg-blue-100"
+            currentPage === 1
+              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+              : "bg-white hover:bg-blue-100"
           }`}
         >
           ← Prev
@@ -350,22 +343,26 @@ export default function CertificateTable() {
           onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
           disabled={currentPage === totalPages}
           className={`px-3 py-1 border rounded ${
-            currentPage === totalPages ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-white hover:bg-blue-100"
+            currentPage === totalPages
+              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+              : "bg-white hover:bg-blue-100"
           }`}
         >
           Next →
         </button>
       </div>
 
-      {/* Tombol Tambah Data */}
-      <div className="mt-6 flex justify-center">
-        <button
-          onClick={() => navigate("/TambahData")}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-        >
-          + Tambah Data Baru
-        </button>
-      </div>
+      {/* Tombol Tambah Data hanya admin */}
+      {role === "admin" && (
+        <div className="mt-6 flex justify-center">
+          <button
+            onClick={() => navigate("/TambahData")}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+          >
+            + Tambah Data Baru
+          </button>
+        </div>
+      )}
 
       {/* Modal Edit */}
       <EditModal

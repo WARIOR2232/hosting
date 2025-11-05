@@ -1,8 +1,8 @@
 // src/firebase.js
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore"; // ✅ Tambahkan ini
 
-// GANTI dengan config dari Firebase Console
 const firebaseConfig = {
   apiKey: "AIzaSyAswgg7ldhHDVmzFXNcgB9H1Yf8u1Knqk8",
   authDomain: "kek-ni.firebaseapp.com",
@@ -15,3 +15,4 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const db = getFirestore(app); // ✅ Tambahkan ini
