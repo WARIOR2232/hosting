@@ -12,7 +12,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import { Award, Layers } from "lucide-react";
+import { Award, Layers, Users } from "lucide-react";
 
 export default function CardCerti2() {
   const [data, setData] = useState([]);
@@ -50,15 +50,35 @@ export default function CardCerti2() {
     .sort((a, b) => b.value - a.value)
     .slice(0, 5); // top 5
 
+  // === WNI / WNA COUNT ===
+  const nationalityCount = data.reduce(
+    (acc, item) => {
+      const key = item.Kewarganegaraan?.toLowerCase().trim();
+      if (key === "wni") acc.wni++;
+      else if (key === "wna") acc.wna++;
+      else acc.tidakDiketahui++;
+      return acc;
+    },
+    { wni: 0, wna: 0, tidakDiketahui: 0 }
+  );
+
+  const nationalityData = [
+    { name: "WNI", value: nationalityCount.wni },
+    { name: "WNA", value: nationalityCount.wna },
+  ];
+
+  const NATIONAL_COLORS = ["#16a34a", "#dc2626"];
+
   return (
     <section className="mt-6">
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {/* 🟦 KUALIFIKASI */}
         <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
           <div className="flex items-center gap-2 mb-4">
             <Award className="w-6 h-6 text-blue-600" />
-            <h3 className="text-gray-700 font-semibold text-lg"> SIP Berdasarkan Kualifikasi</h3>
+            <h3 className="text-gray-700 font-semibold text-lg">
+              SIP Berdasarkan Kualifikasi
+            </h3>
           </div>
 
           <ResponsiveContainer width="100%" height={280}>
@@ -72,12 +92,16 @@ export default function CardCerti2() {
                 outerRadius="70%"
                 labelLine={false}
                 label={({ name, value }) => {
-                  const short = name.length > 22 ? name.slice(0, 22) + "..." : name;
+                  const short =
+                    name.length > 22 ? name.slice(0, 22) + "..." : name;
                   return `${short} (${value})`;
                 }}
               >
                 {qualData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={QUAL_COLORS[index % QUAL_COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={QUAL_COLORS[index % QUAL_COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip />
@@ -95,7 +119,9 @@ export default function CardCerti2() {
         <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
           <div className="flex items-center gap-2 mb-4">
             <Layers className="w-6 h-6 text-yellow-600" />
-            <h3 className="text-gray-700 font-semibold text-lg">SIP Berdasarkan Brand</h3>
+            <h3 className="text-gray-700 font-semibold text-lg">
+              SIP Berdasarkan Brand
+            </h3>
           </div>
 
           <ResponsiveContainer width="100%" height={280}>
@@ -113,8 +139,51 @@ export default function CardCerti2() {
                 tick={{ fontSize: 12 }}
               />
               <Tooltip />
-              <Bar dataKey="value" fill="#eab308" radius={[5, 5, 5, 5]} barSize={20} />
+              <Bar
+                dataKey="value"
+                fill="#eab308"
+                radius={[5, 5, 5, 5]}
+                barSize={20}
+              />
             </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* 🟩 WNI / WNA */}
+        <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
+          <div className="flex items-center gap-2 mb-4">
+            <Users className="w-6 h-6 text-green-600" />
+            <h3 className="text-gray-700 font-semibold text-lg">
+              SIP Berdasarkan Kewarganegaraan
+            </h3>
+          </div>
+
+          <ResponsiveContainer width="100%" height={280}>
+            <PieChart>
+              <Pie
+                data={nationalityData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius="70%"
+                label={({ name, value }) => `${name} (${value})`}
+              >
+                {nationalityData.map((entry, index) => (
+                  <Cell
+                    key={`cell-national-${index}`}
+                    fill={NATIONAL_COLORS[index % NATIONAL_COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend
+                layout="horizontal"
+                align="center"
+                verticalAlign="bottom"
+                wrapperStyle={{ fontSize: "12px" }}
+              />
+            </PieChart>
           </ResponsiveContainer>
         </div>
       </div>
