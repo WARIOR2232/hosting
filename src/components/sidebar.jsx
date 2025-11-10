@@ -59,7 +59,7 @@ export default function Sidebar({ isOpen, onClose }) {
         md:translate-x-0 transition-transform duration-200`}
     >
       <div className="flex items-center justify-between px-6 h-16">
-        <span className="text-xl font-bold">DashKEK</span>
+        <span className="text-xl font-bold">Dashboard KEK</span>
         <button className="md:hidden" onClick={onClose}>
           ✕
         </button>

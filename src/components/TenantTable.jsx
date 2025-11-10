@@ -179,7 +179,7 @@ export default function CertificateTable() {
 
   return (
     <div className="mt-6 bg-white rounded-lg shadow p-4 overflow-x-auto">
-      <h2 className="text-xl font-semibold mb-4">Certificate List</h2>
+      
 
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Daftar Surat Izin Praktik</h2>

@@ -26,7 +26,7 @@ export default function CardCerti() {
 
   return (
     <section className="mt-4">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">📊 Statistik Sertifikat</h2>
+      <h2 className="text-2xl font-semibold text-gray-800 mb-4">📊 Statistik Surat Izin Praktik (SIP)</h2>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
 
         {/* 🟩 CARD 1 */}
@@ -34,7 +34,7 @@ export default function CardCerti() {
           {/* Header: icon + title */}
           <div className="flex items-center justify-center gap-2 mb-4">
             <FileText className="w-8 h-8 text-green-600" />
-            <h3 className="text-gray-700 font-semibold text-3xl">Total Certificates</h3>
+            <h3 className="text-gray-700 font-semibold text-3xl">Total Sertifikat</h3>
           </div>
           <h2 className="text-7xl font-bold text-gray-800 mt-8">{total}</h2>
         </div>
@@ -43,11 +43,11 @@ export default function CardCerti() {
         <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center justify-start text-center transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg hover:bg-green-50 cursor-pointer min-h-[320px]">
           <div className="flex items-center justify-center gap-2 mb-4">
             <Clock className="w-9 h-9 text-yellow-500" />
-            <h3 className="text-gray-700 font-semibold text-3xl">Expiring Soon</h3>
+            <h3 className="text-gray-700 font-semibold text-3xl">Akan Berakhir</h3>
           </div>
           <div className="leading-tight mt-6 space-y-2">
-            <p className="text-4xl font-semibold text-yellow-500">{expiring} Akan Expired</p>
-            <p className="text-4xl font-semibold text-red-500">{expired} Expired</p>
+            <p className="text-4xl font-semibold text-yellow-500">{expiring} Akan kedaluwarsa</p>
+            <p className="text-4xl font-semibold text-red-500">{expired} kedaluwarsa</p>
             <p className="text-4xl font-semibold text-green-600">{active} Aktif</p>
           </div>
         </div>
