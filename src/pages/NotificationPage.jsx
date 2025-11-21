@@ -8,9 +8,9 @@ export default function NotificationPage() {
   const [toast, setToast] = useState(null);
   const [search, setSearch] = useState("");
 
-  // 🔹 URL Google Apps Script
+  // 🔹 URL Google Apps Script unutk api email
   const SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbwPMnfrDkOyhTuppAEYjzwwlBcfM4h3ttYk9GSWPZDYUFXoUwN6gTUVP8kfzr5DronmOw/exec";
+    "https://script.google.com/macros/s/AKfycbwEbaMIfbDHBHkr3woBM_2kHxevcWo0z9bvr1YtkAGDkAjYB_FPWx9G7zAokP1vpQ95/exec";
 
   // 🔹 Format tanggal Indonesia
   const formatDate = (dateString) => {
@@ -23,10 +23,10 @@ export default function NotificationPage() {
     });
   };
 
-  // 🔹 Ambil data dari Google Sheet
+  // 🔹 Ambil data dari Google Sheet unutk tampilan tabel
   useEffect(() => {
     fetch(
-      "https://script.google.com/macros/s/AKfycbypnD-6X_EWw7EVg-E-ZQR6RtyRzU-XBQvElZ8YWMbJcsdKvwustsRn6YFYFbjPDfAp/exec"
+      "https://script.google.com/macros/s/AKfycbyUdOij65T8KQvfRLdiZJnuhXwQUhE0PSqyaJudi7cO3LoBjdWCvxFM2B_DPuRHtIi8/exec"
     )
       .then((res) => res.json())
       .then((result) => {
@@ -34,7 +34,7 @@ export default function NotificationPage() {
           const diff =
             (new Date(item.TanggalBerakhir) - new Date()) /
             (1000 * 60 * 60 * 24);
-          return diff > 0 && diff <= 30;
+          return diff > 0 && diff <= 90;
         });
         setData(soonExpired);
         setFiltered(soonExpired);

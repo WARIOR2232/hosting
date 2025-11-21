@@ -13,17 +13,52 @@ export default function EditModal({ isOpen, onClose, onSave, selectedData }) {
     TanggalBerakhir: "",
   });
 
-  // Fungsi format tanggal supaya input type=date bisa baca
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const parts = dateString.split(/[\/\-]/);
-    if (parts[0].length === 4) return dateString;
-    if (parts[2]?.length === 4)
-      return `${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(2, "0")}`;
+  // ===========================
+  // NORMALISASI TANGGAL FIX
+  // ===========================
+  const normalizeToInputDate = (dateValue) => {
+    if (!dateValue) return "";
+
+    // Jika sudah berupa Date
+    if (dateValue instanceof Date && !isNaN(dateValue)) {
+      const y = dateValue.getFullYear();
+      const m = String(dateValue.getMonth() + 1).padStart(2, "0");
+      const d = String(dateValue.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    if (typeof dateValue === "string") {
+      // ISO string "2025-11-27T00:00:00.000Z"
+      if (dateValue.includes("T")) {
+        const dt = new Date(dateValue);
+        if (!isNaN(dt)) {
+          const y = dt.getFullYear();
+          const m = String(dt.getMonth() + 1).padStart(2, "0");
+          const d = String(dt.getDate()).padStart(2, "0");
+          return `${y}-${m}-${d}`;
+        }
+      }
+
+      // Format YYYY-MM-DD
+      const isoMatch = dateValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (isoMatch) return dateValue;
+
+      // Format DD/MM/YYYY atau DD-MM-YYYY
+      const dmyMatch = dateValue.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+      if (dmyMatch) {
+        const d = dmyMatch[1].padStart(2, "0");
+        const m = dmyMatch[2].padStart(2, "0");
+        const y = dmyMatch[3];
+        return `${y}-${m}-${d}`;
+      }
+    }
+
     return "";
   };
 
-  // Isi formData berdasarkan data yang diklik
+  // ===========================
+  // SET FORM SAAT MODAL DIBUKA
+  // ===========================
   useEffect(() => {
     if (selectedData) {
       setFormData({
@@ -33,53 +68,52 @@ export default function EditModal({ isOpen, onClose, onSave, selectedData }) {
         Brand: selectedData.Brand || "",
         Kualifikasi: selectedData.Kualifikasi || "",
         Kewarganegaraan: selectedData.Kewarganegaraan || "",
-        TanggalBerlaku: formatDate(selectedData.TanggalBerlaku),
-        TanggalBerakhir: formatDate(selectedData.TanggalBerakhir),
+        TanggalBerlaku: normalizeToInputDate(selectedData.TanggalBerlaku),
+        TanggalBerakhir: normalizeToInputDate(selectedData.TanggalBerakhir),
       });
     }
   }, [selectedData]);
 
-  // Setiap input berubah
+  // ===========================
+  // HANDLE CHANGE INPUT
+  // ===========================
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Simpan data
- // Simpan data (PERBAIKAN)
-const handleSubmit = (e) => {
-  e.preventDefault();
+  // ===========================
+  // SUBMIT + VALIDASI
+  // ===========================
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  // Validasi tanggal wajib diisi
-  if (!formData.TanggalBerlaku || !formData.TanggalBerakhir) {
+    if (!formData.TanggalBerlaku || !formData.TanggalBerakhir) {
+      Swal.fire({
+        icon: "warning",
+        title: "Tanggal wajib diisi",
+        text: "Tanggal Berlaku dan Tanggal Berakhir tidak boleh kosong!",
+        confirmButtonColor: "#3085d6",
+      });
+      return;
+    }
+
+    const payload = {
+      ...formData,
+      rowNumber: selectedData?.rowNumber,
+    };
+
+    onSave(payload);
+    onClose();
+
     Swal.fire({
-      icon: "warning",
-      title: "Perhatian!",
-      text: "Tanggal Berlaku dan Tanggal Berakhir wajib diisi!",
-      confirmButtonColor: "#3085d6",
+      icon: "success",
+      title: "Berhasil!",
+      text: "Data berhasil diperbarui",
+      timer: 1500,
+      showConfirmButton: false,
     });
-    return;
-  }
-
-  // ✅ Tambahkan rowNumber agar tidak menambah data baru
-  const payload = { ...formData, rowNumber: selectedData?.rowNumber };
-
-  // Kirim ke TenantTable
-  onSave(payload);
-
-  // Tutup modal setelah simpan
-  onClose();
-
-  // Opsional: tampilkan notifikasi sukses
-  Swal.fire({
-    icon: "success",
-    title: "Berhasil!",
-    text: "Data berhasil diperbarui.",
-    timer: 1800,
-    showConfirmButton: false,
-  });
-};
-
+  };
 
   if (!isOpen) return null;
 
@@ -99,7 +133,6 @@ const handleSubmit = (e) => {
               value={formData.NomorSIP}
               onChange={handleChange}
               className="border rounded-md px-2 py-1 w-full"
-              readOnly
             />
           </div>
 

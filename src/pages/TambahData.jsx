@@ -23,9 +23,9 @@ export default function TambahData() {
     e.preventDefault();
 
     try {
-      // 🔗 Ganti dengan URL Apps Script kamu
+      // 🔗 Ganti dengan URL Apps Script kamu , untuk tambah 
       const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbypnD-6X_EWw7EVg-E-ZQR6RtyRzU-XBQvElZ8YWMbJcsdKvwustsRn6YFYFbjPDfAp/exec",
+        "https://script.google.com/macros/s/AKfycbyUdOij65T8KQvfRLdiZJnuhXwQUhE0PSqyaJudi7cO3LoBjdWCvxFM2B_DPuRHtIi8/exec",
         {
           method: "POST",
           headers: {

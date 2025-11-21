@@ -6,7 +6,7 @@ export default function CardCerti() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch("https://script.google.com/macros/s/AKfycbypnD-6X_EWw7EVg-E-ZQR6RtyRzU-XBQvElZ8YWMbJcsdKvwustsRn6YFYFbjPDfAp/exec")
+    fetch("https://script.google.com/macros/s/AKfycbyUdOij65T8KQvfRLdiZJnuhXwQUhE0PSqyaJudi7cO3LoBjdWCvxFM2B_DPuRHtIi8/exec")
       .then((res) => res.json())
       .then((result) => setData(result));
   }, []);

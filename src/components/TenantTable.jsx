@@ -23,7 +23,7 @@ export default function CertificateTable() {
   const navigate = useNavigate();
 
   const SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbypnD-6X_EWw7EVg-E-ZQR6RtyRzU-XBQvElZ8YWMbJcsdKvwustsRn6YFYFbjPDfAp/exec";
+    "https://script.google.com/macros/s/AKfycbyUdOij65T8KQvfRLdiZJnuhXwQUhE0PSqyaJudi7cO3LoBjdWCvxFM2B_DPuRHtIi8/exec";
 
   // 🔹 Ambil role user dari Firestore
   useEffect(() => {
@@ -127,34 +127,32 @@ export default function CertificateTable() {
     setSelectedData(null);
   };
 
-  const handleSaveEdit = async (updatedData) => {
-    if (
-      !updatedData.TanggalBerakhir ||
-      updatedData.TanggalBerakhir !== selectedData.TanggalBerakhir
-    ) {
-      alert("⚠️ Tanggal berakhir tidak boleh kosong atau diubah!");
-      return;
-    }
+const handleSaveEdit = async (updatedData) => {
+  if (!updatedData.TanggalBerakhir) {
+    alert("⚠️ Tanggal berakhir tidak boleh kosong!");
+    return;
+  }
 
-    try {
-      await fetch(SCRIPT_URL, {
-        method: "POST",
-        body: new URLSearchParams({
-          action: "edit",
-          rowNumber: updatedData.rowNumber,
-          ...updatedData,
-        }),
-      });
+  try {
+    await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: new URLSearchParams({
+        action: "edit",
+        rowNumber: selectedData.rowNumber, // PENTING: rowNumber harus dari selectedData
+        ...updatedData,
+      }),
+    });
 
-      handleCloseModal();
-      fetchData();
+    handleCloseModal();
+    fetchData();
 
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 2000);
-    } catch (err) {
-      console.error("update gagal", err);
-    }
-  };
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 2000);
+  } catch (err) {
+    console.error("update gagal", err);
+  }
+};
+
 
   // 🔹 Filter
   const itemsPerPage = 15;
