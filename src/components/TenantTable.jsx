@@ -16,6 +16,7 @@ export default function CertificateTable() {
   const [statusFilter, setStatusFilter] = useState("Semua");
   const [selectedPT, setSelectedPT] = useState("Semua");
   const [selectedKualifikasi, setSelectedKualifikasi] = useState("Semua");
+  const [kewarganegaraanFilter, setKewarganegaraanFilter] = useState("Semua");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -152,12 +153,32 @@ const handleSaveEdit = async (updatedData) => {
     console.error("update gagal", err);
   }
 };
+//pagination
+const getPaginationPages = () => {
+  const maxVisible = 5;
+  const pages = [];
+
+  let start = Math.max(currentPage - Math.floor(maxVisible / 2), 1);
+  let end = start + maxVisible - 1;
+
+  if (end > totalPages) {
+    end = totalPages;
+    start = Math.max(end - maxVisible + 1, 1);
+  }
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+
+  return pages;
+};
 
 
   // 🔹 Filter
   const itemsPerPage = 15;
   const uniqueNamaPT = ["Semua", ...new Set(data.map((i) => i.NamaPT))];
   const uniqueKualifikasi = ["Semua", ...new Set(data.map((i) => i.Kualifikasi))];
+
 
   const filteredData = data.filter((row) => {
     const matchesName = row.NamaPemilik?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -166,7 +187,11 @@ const handleSaveEdit = async (updatedData) => {
     const matchesPT = selectedPT === "Semua" || row.NamaPT === selectedPT;
     const matchesKualifikasi =
       selectedKualifikasi === "Semua" || row.Kualifikasi === selectedKualifikasi;
-    return matchesName && matchesStatus && matchesPT && matchesKualifikasi;
+      const matchesKewarganegaraan =
+  kewarganegaraanFilter === "Semua" ||
+  row.Kewarganegaraan === kewarganegaraanFilter;
+
+    return matchesName && matchesStatus && matchesPT && matchesKualifikasi && matchesKewarganegaraan;
   });
 
   const totalPages = Math.max(1, Math.ceil(filteredData.length / itemsPerPage));
@@ -239,6 +264,23 @@ const handleSaveEdit = async (updatedData) => {
           <option value="Akan Expired">Akan Expired</option>
           <option value="Expired">Expired</option>
         </select>
+
+         <select
+  value={kewarganegaraanFilter}
+  onChange={(e) => {
+    setKewarganegaraanFilter(e.target.value);
+    setCurrentPage(1);
+  }}
+  className="border p-2 rounded w-full md:w-1/3"
+>
+  <option value="Semua">Semua Kewarganegaraan</option>
+  <option value="WNI">WNI</option>
+  <option value="WNA">WNA</option>
+</select>
+
+        
+
+        
       </div>
 
       {/* Table */}
@@ -312,43 +354,67 @@ const handleSaveEdit = async (updatedData) => {
       </table>
 
       {/* Pagination */}
-      <div className="mt-4 flex justify-center gap-2 flex-wrap">
-        <button
-          onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-          disabled={currentPage === 1}
-          className={`px-3 py-1 border rounded ${
-            currentPage === 1
-              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-              : "bg-white hover:bg-blue-100"
-          }`}
-        >
-          ← Prev
-        </button>
+<div className="mt-4 flex justify-center gap-2 flex-wrap">
 
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`px-3 py-1 border rounded ${
-              currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-white hover:bg-blue-100"
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
+  {/* Prev */}
+  <button
+    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+    disabled={currentPage === 1}
+    className={`px-3 py-1 border rounded ${
+      currentPage === 1
+        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+        : "bg-white hover:bg-blue-100"
+    }`}
+  >
+    ← Prev
+  </button>
 
-        <button
-          onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-          disabled={currentPage === totalPages}
-          className={`px-3 py-1 border rounded ${
-            currentPage === totalPages
-              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-              : "bg-white hover:bg-blue-100"
-          }`}
-        >
-          Next →
-        </button>
-      </div>
+  {/* NOMOR PAGINATION (maks 5) */}
+  {getPaginationPages().map((page) => (
+    <button
+      key={page}
+      onClick={() => setCurrentPage(page)}
+      className={`px-3 py-1 border rounded ${
+        currentPage === page
+          ? "bg-blue-500 text-white"
+          : "bg-white hover:bg-blue-100"
+      }`}
+    >
+      {page}
+    </button>
+  ))}
+
+  {/* BAGIAN 3 → TITIK-TITIK + HALAMAN TERAKHIR */}
+  {totalPages > 5 && getPaginationPages().slice(-1)[0] < totalPages && (
+    <>
+      <span className="px-2 py-1">...</span>
+      <button
+        onClick={() => setCurrentPage(totalPages)}
+        className={`px-3 py-1 border rounded ${
+          currentPage === totalPages
+            ? "bg-blue-500 text-white"
+            : "bg-white hover:bg-blue-100"
+        }`}
+      >
+        {totalPages}
+      </button>
+    </>
+  )}
+
+  {/* Next */}
+  <button
+    onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+    disabled={currentPage === totalPages}
+    className={`px-3 py-1 border rounded ${
+      currentPage === totalPages
+        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+        : "bg-white hover:bg-blue-100"
+    }`}
+  >
+    Next →
+  </button>
+</div>
+
 
       {/* Tombol Tambah Data hanya admin */}
       {role === "admin" && (
