@@ -64,7 +64,7 @@ export default function CardCerti() {
             <h3 className="text-gray-700 font-semibold text-3xl">Status</h3>
           </div>
 
-          <PieChart width={250} height={230}>
+          <PieChart width={380} height={230}>
             <Pie
               data={pieData}
               cx="50%"
