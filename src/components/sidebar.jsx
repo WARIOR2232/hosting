@@ -3,7 +3,7 @@ import { signOut } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
-import { Home, Users, Bell, Settings, LogOut } from "lucide-react";
+import { Home, Users, Bell, Settings, LogOut, User2Icon, BookAIcon, BookAlert, BookCheck } from "lucide-react";
 
 export default function Sidebar({ isOpen, onClose }) {
   const [role, setRole] = useState(null);
@@ -40,6 +40,7 @@ export default function Sidebar({ isOpen, onClose }) {
   const baseMenu = [
     { to: "/", label: "Dashboard", icon: Home },
     { to: "/tenants", label: "SIP", icon: Users },
+    { to: "/Doku", label: "Dokumen", icon: BookCheck },
   ];
 
   // 🛠️ Menu admin tambahan

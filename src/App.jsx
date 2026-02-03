@@ -8,6 +8,7 @@ import Login from "./pages/login";
 import PrivateRoute from "./PrivateRoute";
 import TambahData from "./pages/TambahData";
 import Notifikasi from "./pages/NotificationPage";
+import RPTKAPage from "./pages/Doku";
 
 function App() {
   return (
@@ -48,7 +49,10 @@ function App() {
 
           {/* (opsional) Halaman Settings jika nanti mau dipakai */}
           <Route path="/settings" element={<Settings />} />
+          <Route path="/Doku" element={<RPTKAPage  />} />
         </Route>
+
+        
       </Routes>
     </BrowserRouter>
   );
