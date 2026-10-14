@@ -4,12 +4,15 @@ import Swal from "sweetalert2";
 
 export default function TambahData() {
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
     NomorSIP: "",
     NamaPemilik: "",
     NamaPT: "",
     Brand: "",
     Kualifikasi: "",
+    Kategori: "",
+    KelompokTenaga: "",
     TanggalBerlaku: "",
     TanggalBerakhir: "",
     Kewarganegaraan: "",
@@ -23,9 +26,8 @@ export default function TambahData() {
     e.preventDefault();
 
     try {
-      // 🔗 Ganti dengan URL Apps Script kamu , untuk tambah 
       const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbyUdOij65T8KQvfRLdiZJnuhXwQUhE0PSqyaJudi7cO3LoBjdWCvxFM2B_DPuRHtIi8/exec",
+        "https://script.google.com/macros/s/AKfycbwIrGsMgTBTG8bRhD8b9dCKgqSf_J1Vk0apEzuaVCMvVWi4FysVRO4QfK5gWY2DVOV8/exec",
         {
           method: "POST",
           headers: {
@@ -69,7 +71,7 @@ export default function TambahData() {
   return (
     <div className="max-w-xl mx-auto mt-8 p-6 bg-white shadow rounded-lg">
       <h2 className="text-xl font-bold mb-4 text-center">
-        Tambah Data Sertifikat
+        Tambah Data SIP
       </h2>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
@@ -79,11 +81,23 @@ export default function TambahData() {
           { label: "Nama PT", name: "NamaPT" },
           { label: "Brand", name: "Brand" },
           { label: "Kualifikasi", name: "Kualifikasi" },
-          { label: "Tanggal Berlaku", name: "TanggalBerlaku", type: "date" },
-          { label: "Tanggal Berakhir", name: "TanggalBerakhir", type: "date" },
+          { label: "Kategori", name: "Kategori" },
+          { label: "Kelompok Tenaga", name: "KelompokTenaga" },
+          {
+            label: "Tanggal Berlaku",
+            name: "TanggalBerlaku",
+            type: "date",
+          },
+          {
+            label: "Tanggal Berakhir",
+            name: "TanggalBerakhir",
+            type: "date",
+          },
         ].map(({ label, name, type = "text" }) => (
           <div key={name}>
-            <label className="block text-sm font-medium mb-1">{label}</label>
+            <label className="block text-sm font-medium mb-1">
+              {label}
+            </label>
             <input
               type={type}
               name={name}
@@ -95,7 +109,6 @@ export default function TambahData() {
           </div>
         ))}
 
-        {/* 🟢 Dropdown Kewarganegaraan */}
         <div>
           <label className="block text-sm font-medium mb-1">
             Kewarganegaraan
@@ -107,7 +120,7 @@ export default function TambahData() {
             required
             className="w-full border border-gray-300 px-3 py-2 rounded focus:ring-2 focus:ring-blue-400"
           >
-            <option value="">-- Pilih --</option>
+            <option value="">-- Pilih Kewarganegaraan --</option>
             <option value="WNI">WNI</option>
             <option value="WNA">WNA</option>
           </select>

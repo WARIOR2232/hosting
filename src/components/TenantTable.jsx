@@ -24,7 +24,7 @@ export default function CertificateTable() {
   const navigate = useNavigate();
 
   const SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbyUdOij65T8KQvfRLdiZJnuhXwQUhE0PSqyaJudi7cO3LoBjdWCvxFM2B_DPuRHtIi8/exec";
+    "https://script.google.com/macros/s/AKfycbwIrGsMgTBTG8bRhD8b9dCKgqSf_J1Vk0apEzuaVCMvVWi4FysVRO4QfK5gWY2DVOV8/exec";
 
   // 🔹 Ambil role user dari Firestore
   useEffect(() => {
@@ -293,6 +293,8 @@ const getPaginationPages = () => {
             <th className="px-3.5 py-3">Pelaku Usaha</th>
             <th className="px-4 py-3">Brand</th>
             <th className="px-4 py-3">Kualifikasi</th>
+            <th className="px-4 py-3">Kategori</th>
+            <th className="px-4 py-3">Kelompok Tenaga</th>
             <th className="px-4 py-3">Kewarganegaraan</th>
             <th className="px-9 py-3">Tanggal Berlaku</th>
             <th className="px-9 py-3">Tanggal Berakhir</th>
@@ -310,6 +312,8 @@ const getPaginationPages = () => {
               <td className="px-4 py-2">{row.NamaPT}</td>
               <td className="px-4 py-2">{row.Brand}</td>
               <td className="px-4 py-2">{row.Kualifikasi}</td>
+              <td className="px-4 py-2">{row.Kategori}</td>
+              <td className="px-4 py-2">{row.KelompokTenaga}</td>
               <td className="px-4 py-2 text-center">{row.Kewarganegaraan}</td>
               <td className="px-4 py-2 text-center">{formatDateForTable(row.TanggalBerlaku)}</td>
               <td className="px-4 py-2 text-center">{formatDateForTable(row.TanggalBerakhir)}</td>

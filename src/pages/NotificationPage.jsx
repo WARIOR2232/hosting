@@ -26,7 +26,7 @@ export default function NotificationPage() {
   // 🔹 Ambil data dari Google Sheet unutk tampilan tabel
   useEffect(() => {
     fetch(
-      "https://script.google.com/macros/s/AKfycbyUdOij65T8KQvfRLdiZJnuhXwQUhE0PSqyaJudi7cO3LoBjdWCvxFM2B_DPuRHtIi8/exec"
+      "https://script.google.com/macros/s/AKfycbwIrGsMgTBTG8bRhD8b9dCKgqSf_J1Vk0apEzuaVCMvVWi4FysVRO4QfK5gWY2DVOV8/exec"
     )
       .then((res) => res.json())
       .then((result) => {

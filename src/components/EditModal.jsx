@@ -8,6 +8,8 @@ export default function EditModal({ isOpen, onClose, onSave, selectedData }) {
     NamaPT: "",
     Brand: "",
     Kualifikasi: "",
+    Kategori: "",
+    KelompokTenaga: "",
     Kewarganegaraan: "",
     TanggalBerlaku: "",
     TanggalBerakhir: "",
@@ -67,6 +69,8 @@ export default function EditModal({ isOpen, onClose, onSave, selectedData }) {
         NamaPT: selectedData.NamaPT || "",
         Brand: selectedData.Brand || "",
         Kualifikasi: selectedData.Kualifikasi || "",
+        Kategori: selectedData.Kategori || "",
+        KelompokTenaga: selectedData[KelompokTenaga] || "",
         Kewarganegaraan: selectedData.Kewarganegaraan || "",
         TanggalBerlaku: normalizeToInputDate(selectedData.TanggalBerlaku),
         TanggalBerakhir: normalizeToInputDate(selectedData.TanggalBerakhir),
@@ -179,6 +183,27 @@ export default function EditModal({ isOpen, onClose, onSave, selectedData }) {
               className="border rounded-md px-2 py-1 w-full"
             />
           </div>
+          <div>
+          <label className="block text-sm font-medium">Kategori</label>
+          <input
+             type="text"
+             name="Kategori"
+             value={formData.Kategori}
+             onChange={handleChange}
+             className="border rounded-md px-2 py-1 w-full"
+           />
+           </div>
+
+            <div>
+              <label className="block text-sm font-medium">Kelompok Tenaga</label>
+              <input
+                type="text"
+                name="KelompokTenaga"
+                value={formData.KelompokTenaga}
+                onChange={handleChange}
+                className="border rounded-md px-2 py-1 w-full"
+              />
+            </div>
 
           <div>
             <label className="block text-sm font-medium">Kewarganegaraan</label>
