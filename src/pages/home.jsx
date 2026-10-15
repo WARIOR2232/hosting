@@ -1,3 +1,4 @@
+import SipDashboard from "../components/SIP/SipDashboard";
 import { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
 import CertificateTable from "../components/TenantTable";
@@ -58,8 +59,7 @@ export default function Home() {
       </p>
 
       {/* Komponen statistik */}
-      <CardCerti data={data} />
-      <CardCerti2 data={data} />
+       <SipDashboard />
 
       {/* 🧩 Bungkus tabel dengan overflow-x-auto agar bisa digeser di mobile */}
       <div className="overflow-x-auto mt-6 rounded-lg shadow-sm">
