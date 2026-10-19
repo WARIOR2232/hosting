@@ -3,6 +3,7 @@ import SummaryCards from "./SummaryCards";
 import BreakdownKelompok from "./BreakdownKelompok";
 import StatusCards from "./StatusCards";
 import BreakdownFasilitas from "./BreakdownFasilitas";
+import DokterAktifPelakuUsaha from "./DokterAktifPelakuUsaha";
 import ChartsRow from "./ChartsRow";
 
 export default function SipDashboard() {
@@ -17,6 +18,7 @@ export default function SipDashboard() {
       <BreakdownKelompok rows={rows} />
       <StatusCards rows={rows} />
       <BreakdownFasilitas rows={rows} />
+      <DokterAktifPelakuUsaha rows={rows} />
       <ChartsRow rows={rows} />
     </div>
   );
