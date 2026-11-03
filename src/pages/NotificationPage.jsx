@@ -160,7 +160,7 @@ export default function NotificationPage() {
       ) : (
         // ✅ TABEL RESPONSIF
         <div className="overflow-x-auto bg-white rounded-xl shadow border border-gray-200">
-          <table className="min-w-full text-sm sm:text-base">
+          <table className="min-w-[640px] text-sm">
             <thead className="bg-gray-100 text-gray-700">
               <tr>
                 <th className="py-2 px-4 border-b text-left">Nama Pemilik</th>

@@ -54,14 +54,14 @@ export default function Sidebar({ isOpen, onClose }) {
 
   return (
     <aside
-      className={`fixed md:static inset-y-0 left-0 z-20 w-64 flex flex-col
+      className={`fixed lg:static inset-y-0 left-0 z-40 w-64 flex flex-col
         bg-[#27793c] text-white
         transform ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        md:translate-x-0 transition-transform duration-200`}
+        lg:translate-x-0 transition-transform duration-200`}
     >
       <div className="flex items-center justify-between px-6 h-16">
         <span className="text-xl font-bold">Dashboard KEK</span>
-        <button className="md:hidden" onClick={onClose}>
+        <button className="lg:hidden" onClick={onClose}>
           ✕
         </button>
       </div>

@@ -31,7 +31,7 @@ export default function BreakdownKelompok({ rows }) {
       <div className="mt-3 overflow-x-auto rounded-lg border border-slate-200">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="bg-slate-100 text-xs text-slate-500">
-            <tr>
+            <tr className="whitespace-nowrap">
               <th className="px-3 py-2">Kelompok</th>
               <th className="px-3 py-2 text-right">Total SIP</th>
               <th className="px-3 py-2 text-right">Aktif Bersih</th>
@@ -44,13 +44,13 @@ export default function BreakdownKelompok({ rows }) {
           <tbody>
             {data.map((d) => (
               <tr key={d.label} className="border-t border-slate-200">
-                <td className="px-3 py-2 font-semibold">{d.label}</td>
-                <td className="px-3 py-2 text-right">{d.total}</td>
-                <td className="px-3 py-2 text-right font-bold text-green-700">{d.bersih}</td>
-                <td className="px-3 py-2 text-right">{d.aktif}</td>
-                <td className="px-3 py-2 text-right font-bold text-amber-600">{d.akan}</td>
-                <td className="px-3 py-2 text-right font-bold text-red-600">{d.expired}</td>
-                <td className="px-3 py-2 text-right font-bold text-red-600">{d.dicabut}</td>
+                <td className="px-3 py-2 font-semibold whitespace-nowrap">{d.label}</td>
+                <td className="px-3 py-2 text-right whitespace-nowrap">{d.total}</td>
+                <td className="px-3 py-2 text-right font-bold text-green-700 whitespace-nowrap">{d.bersih}</td>
+                <td className="px-3 py-2 text-right whitespace-nowrap">{d.aktif}</td>
+                <td className="px-3 py-2 text-right font-bold text-amber-600 whitespace-nowrap">{d.akan}</td>
+                <td className="px-3 py-2 text-right font-bold text-red-600 whitespace-nowrap">{d.expired}</td>
+                <td className="px-3 py-2 text-right font-bold text-red-600 whitespace-nowrap">{d.dicabut}</td>
               </tr>
             ))}
           </tbody>

@@ -201,21 +201,20 @@ const getPaginationPages = () => {
   if (loading) return <p className="text-center mt-4">Loading...</p>;
 
   return (
-    <div className="mt-6 bg-white rounded-lg shadow p-4 overflow-x-auto">
-      
+    <div className="mt-6 bg-white rounded-lg shadow p-4">
 
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4">
         <h2 className="text-xl font-bold">Daftar Surat Izin Praktik</h2>
         <button
           onClick={handleExport}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition w-full sm:w-auto"
         >
           Export to Excel
         </button>
       </div>
 
       {/* Filter */}
-      <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 flex-wrap">
+      <div className="mb-4 grid grid-cols-1 gap-3">
         <input
           type="text"
           placeholder="Cari berdasarkan nama pemilik..."
@@ -224,11 +223,11 @@ const getPaginationPages = () => {
             setSearchTerm(e.target.value);
             setCurrentPage(1);
           }}
-          className="border p-2 rounded w-full md:w-1/3"
+          className="border p-2 rounded w-full"
         />
 
         <Select
-          className="w-full md:w-1/3"
+          className="w-full"
           options={uniqueNamaPT.map((pt) => ({ value: pt, label: pt }))}
           onChange={(selected) => {
             setSelectedPT(selected?.value || "Semua");
@@ -240,7 +239,7 @@ const getPaginationPages = () => {
         />
 
         <Select
-          className="w-full md:w-1/3"
+          className="w-full"
           options={uniqueKualifikasi.map((k) => ({ value: k, label: k }))}
           onChange={(selected) => {
             setSelectedKualifikasi(selected?.value || "Semua");
@@ -257,7 +256,7 @@ const getPaginationPages = () => {
             setStatusFilter(e.target.value);
             setCurrentPage(1);
           }}
-          className="border p-2 rounded w-full md:w-1/3"
+          className="border p-2 rounded w-full"
         >
           <option value="Semua">Semua Status</option>
           <option value="Aktif">Aktif</option>
@@ -271,7 +270,7 @@ const getPaginationPages = () => {
     setKewarganegaraanFilter(e.target.value);
     setCurrentPage(1);
   }}
-  className="border p-2 rounded w-full md:w-1/3"
+  className="border p-2 rounded w-full"
 >
   <option value="Semua">Semua Kewarganegaraan</option>
   <option value="WNI">WNI</option>
@@ -283,10 +282,11 @@ const getPaginationPages = () => {
         
       </div>
 
-      {/* Table */}
-      <table className="min-w-full table-auto text-sm text-left">
+      {/* Table — dibungkus overflow-x-auto agar bisa digeser ke samping di mobile */}
+      <div className="overflow-x-auto">
+      <table className="min-w-[1100px] table-auto text-sm text-left">
         <thead className="bg-gray-100 text-gray-700">
-          <tr>
+          <tr className="whitespace-nowrap">
             <th className="px-4 py-3">No</th>
             <th className="px-4 py-3">Nomor SIP</th>
             <th className="px-4 py-3">Nama Pemilik</th>
@@ -307,18 +307,18 @@ const getPaginationPages = () => {
           {paginatedData.map((row, index) => (
             <tr key={row.rowNumber ?? index} className="border-t border-gray-200 hover:bg-gray-50">
               <td className="px-4 py-2 text-center">{startIndex + index + 1}</td>
-              <td className="px-4 py-2">{row.NomorSIP}</td>
-              <td className="px-4 py-2">{row.NamaPemilik}</td>
-              <td className="px-4 py-2">{row.NamaPT}</td>
-              <td className="px-4 py-2">{row.Brand}</td>
-              <td className="px-4 py-2">{row.Kualifikasi}</td>
-              <td className="px-4 py-2">{row.Kategori}</td>
-              <td className="px-4 py-2">{row.KelompokTenaga}</td>
-              <td className="px-4 py-2 text-center">{row.Kewarganegaraan}</td>
-              <td className="px-4 py-2 text-center">{formatDateForTable(row.TanggalBerlaku)}</td>
-              <td className="px-4 py-2 text-center">{formatDateForTable(row.TanggalBerakhir)}</td>
-              <td className="px-1 py-2 text-center">{row.SisaHari}</td>
-              <td className="px-1 py-2 text-center">
+              <td className="px-4 py-2 whitespace-nowrap">{row.NomorSIP}</td>
+              <td className="px-4 py-2 whitespace-nowrap">{row.NamaPemilik}</td>
+              <td className="px-4 py-2 whitespace-nowrap">{row.NamaPT}</td>
+              <td className="px-4 py-2 whitespace-nowrap">{row.Brand}</td>
+              <td className="px-4 py-2 whitespace-nowrap">{row.Kualifikasi}</td>
+              <td className="px-4 py-2 whitespace-nowrap">{row.Kategori}</td>
+              <td className="px-4 py-2 whitespace-nowrap">{row.KelompokTenaga}</td>
+              <td className="px-4 py-2 text-center whitespace-nowrap">{row.Kewarganegaraan}</td>
+              <td className="px-4 py-2 text-center whitespace-nowrap">{formatDateForTable(row.TanggalBerlaku)}</td>
+              <td className="px-4 py-2 text-center whitespace-nowrap">{formatDateForTable(row.TanggalBerakhir)}</td>
+              <td className="px-1 py-2 text-center whitespace-nowrap">{row.SisaHari}</td>
+              <td className="px-1 py-2 text-center whitespace-nowrap">
                 <span
                   className={`text-xs font-semibold px-2 py-1 rounded-full ${getStatusStyle(
                     row.Status
@@ -330,19 +330,21 @@ const getPaginationPages = () => {
 
               {/* Aksi hanya admin */}
               {role === "admin" && (
-                <td className="px-2 py-2 flex gap-2 justify-center">
-                  <button
-                    onClick={() => handleEdit(row)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(row)}
-                    className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
+                <td className="px-2 py-2">
+                  <div className="flex gap-2 justify-center">
+                    <button
+                      onClick={() => handleEdit(row)}
+                      className="bg-blue-500 text-white px-3 min-h-9 flex items-center rounded text-xs hover:bg-blue-600 whitespace-nowrap"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(row)}
+                      className="bg-red-500 text-white px-3 min-h-9 flex items-center rounded text-xs hover:bg-red-600 whitespace-nowrap"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               )}
             </tr>
@@ -356,9 +358,10 @@ const getPaginationPages = () => {
           )}
         </tbody>
       </table>
+      </div>
 
       {/* Pagination */}
-<div className="mt-4 flex justify-center gap-2 flex-wrap">
+      <div className="mt-4 flex justify-center gap-2 flex-wrap">
 
   {/* Prev */}
   <button

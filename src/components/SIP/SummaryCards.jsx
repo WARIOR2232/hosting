@@ -20,6 +20,7 @@ export default function SummaryCards({ rows }) {
           value={s.dicabut + s.expired}
           note={`Dicabut ${s.dicabut} • Expired ${s.expired}`}
           accent="border-t-red-600"
+          span2
         />
       </div>
 

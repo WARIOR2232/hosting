@@ -61,11 +61,9 @@ export default function Home() {
       {/* Komponen statistik */}
        <SipDashboard />
 
-      {/* 🧩 Bungkus tabel dengan overflow-x-auto agar bisa digeser di mobile */}
-      <div className="overflow-x-auto mt-6 rounded-lg shadow-sm">
-        <div className="min-w-[800px] sm:min-w-full">
-          <CertificateTable data={data} />
-        </div>
+      {/* 🧩 Table sudah scroll sendiri di dalam komponen */}
+      <div className="mt-6">
+        <CertificateTable data={data} />
       </div>
     </section>
   );

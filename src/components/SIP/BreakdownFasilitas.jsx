@@ -12,7 +12,7 @@ export default function BreakdownFasilitas({ rows }) {
       <div className="overflow-x-auto rounded-lg border border-slate-200">
         <table className="w-full min-w-[820px] text-left text-sm">
           <thead className="bg-slate-100 text-xs text-slate-500">
-            <tr>
+            <tr className="whitespace-nowrap">
               <th className="px-3 py-2">Fasilitas</th>
               <th className="px-3 py-2 text-right">Total</th>
               <th className="px-3 py-2 text-right">Aktif Bersih</th>
@@ -31,16 +31,16 @@ export default function BreakdownFasilitas({ rows }) {
               const s = summarize(list);
               return (
                 <tr key={name} className="border-t border-slate-200">
-                  <td className="px-3 py-2 font-semibold">{name}</td>
-                  <td className="px-3 py-2 text-right">{s.total}</td>
-                  <td className="px-3 py-2 text-right font-bold text-green-700">{s.bersih}</td>
-                  <td className="px-3 py-2 text-right">{count(list, true, "WNA")}</td>
-                  <td className="px-3 py-2 text-right">{count(list, true, "WNI")}</td>
-                  <td className="px-3 py-2 text-right">{count(list, false, "WNA")}</td>
-                  <td className="px-3 py-2 text-right">{count(list, false, "WNI")}</td>
-                  <td className="px-3 py-2 text-right font-bold text-amber-600">{s.akan}</td>
-                  <td className="px-3 py-2 text-right font-bold text-red-600">{s.expired}</td>
-                  <td className="px-3 py-2 text-right font-bold text-red-600">{s.dicabut}</td>
+                  <td className="px-3 py-2 font-semibold whitespace-nowrap">{name}</td>
+                  <td className="px-3 py-2 text-right whitespace-nowrap">{s.total}</td>
+                  <td className="px-3 py-2 text-right font-bold text-green-700 whitespace-nowrap">{s.bersih}</td>
+                  <td className="px-3 py-2 text-right whitespace-nowrap">{count(list, true, "WNA")}</td>
+                  <td className="px-3 py-2 text-right whitespace-nowrap">{count(list, true, "WNI")}</td>
+                  <td className="px-3 py-2 text-right whitespace-nowrap">{count(list, false, "WNA")}</td>
+                  <td className="px-3 py-2 text-right whitespace-nowrap">{count(list, false, "WNI")}</td>
+                  <td className="px-3 py-2 text-right font-bold text-amber-600 whitespace-nowrap">{s.akan}</td>
+                  <td className="px-3 py-2 text-right font-bold text-red-600 whitespace-nowrap">{s.expired}</td>
+                  <td className="px-3 py-2 text-right font-bold text-red-600 whitespace-nowrap">{s.dicabut}</td>
                 </tr>
               );
             })}
