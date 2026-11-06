@@ -70,7 +70,7 @@ export default function EditModal({ isOpen, onClose, onSave, selectedData }) {
         Brand: selectedData.Brand || "",
         Kualifikasi: selectedData.Kualifikasi || "",
         Kategori: selectedData.Kategori || "",
-        KelompokTenaga: selectedData[KelompokTenaga] || "",
+        KelompokTenaga: selectedData.KelompokTenaga || "",
         Kewarganegaraan: selectedData.Kewarganegaraan || "",
         TanggalBerlaku: normalizeToInputDate(selectedData.TanggalBerlaku),
         TanggalBerakhir: normalizeToInputDate(selectedData.TanggalBerakhir),
